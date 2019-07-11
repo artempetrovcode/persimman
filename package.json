@@ -1,0 +1,25 @@
+{
+  "name": "persimman",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artempetrovcode/persimman.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/artempetrovcode/persimman/issues"
+  },
+  "homepage": "https://github.com/artempetrovcode/persimman#readme",
+  "devDependencies": {
+    "http-server": "^0.11.1"
+  }
+}
