@@ -2,11 +2,6 @@ const path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: path.resolve(__dirname, 'docs'),
-  },
   entry: ['whatwg-fetch', path.resolve(__dirname, 'src', 'index.js')],
   module: {
     rules: [
@@ -24,8 +19,7 @@ module.exports = {
     path: path.resolve(__dirname, 'docs'),
   },
   plugins: [new HtmlWebpackPlugin({
-      favicon: path.resolve(__dirname, 'docs/favicon.ico'),
-      filename: path.resolve(__dirname, 'docs/generated.html'),
-      title: 'Persimman',
+      filename: path.resolve(__dirname, 'docs/index.html'),
+      template: path.resolve(__dirname, 'src/index.html'),
   })]
 };
