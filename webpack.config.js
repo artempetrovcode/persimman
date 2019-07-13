@@ -1,4 +1,5 @@
 const path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -22,4 +23,9 @@ module.exports = {
     filename: 'index.js',
     path: path.resolve(__dirname, 'docs'),
   },
+  plugins: [new HtmlWebpackPlugin({
+      favicon: path.resolve(__dirname, 'docs/favicon.ico'),
+      filename: path.resolve(__dirname, 'docs/generated.html'),
+      title: 'Persimman',
+  })]
 };
