@@ -125,13 +125,12 @@ const useDataApi = () => {
 
     const todo: Todo = {
         id: Math.random().toString(),
-        row: 123123,
         text: 'text tet',
         completedAt: '', 
-        userId: '', 
+        userId: 'sfsd', 
         isDeleted: false,
-        createdAt: '',
-        updatedAt: '',
+        createdAt: 'sfsdf',
+        updatedAt: 'sdfsf',
       };
     append(todo).then(todo => {
       dispatch({

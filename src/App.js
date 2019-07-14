@@ -18,11 +18,16 @@ console.log(state);
     addTodo();
   }
   
+  console.log(state)
   return (
     <>
       {state.todos.map(todo => (
         <div key={todo.id}>
           {todo.id} {todo.text}
+          [ {todo.completedAt === '' ? 'not completed' : todo.completedAt } ]
+          <button>
+            complete
+          </button>
         </div>
       ))}
       {state.isAppending ? 'Appending...' : <button onClick={handleAddClick}>Add</button>}

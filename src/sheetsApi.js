@@ -85,6 +85,8 @@ const COLUMN_INDEX_TO_CODE = {
   9: 'J',
 };
 
+const idToRowIndexCache = new Map();
+
 function getRange(rangeObj: RangeObject): string {
   const {sheetName, firstColumnCode, firstRowIndex, lastColumnCode, lastRowIndex } = rangeObj;
   const first = firstColumnCode + (firstRowIndex == null ? '' : firstRowIndex);
@@ -150,7 +152,7 @@ const RANGE = getRange({
   lastRowIndex: null,
 }); //'Class Data!A2:G';
 
-console.log('RANGE', RANGE)
+
 
 export function fetch(): Promise<$ReadOnlyArray<Todo>> {
 
@@ -181,9 +183,10 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
           typeof createdAt === 'string' &&
           typeof updatedAt === 'string'
         ) {
+          idToRowIndexCache.set(id, index + 2);
+
           return ({
             id,
-            row: index + 2,
             text,
             completedAt, 
             userId, 
@@ -232,9 +235,11 @@ export function append(todo: Todo): Promise<Todo> {
         throw new Error('Cannot append todo');
       }
 
+      const rowIndex = parseRange(response.result.updates.updatedRange).firstRowIndex;
+      idToRowIndexCache.set(todo.id, rowIndex);
+
       return {
         ...todo,
-        row: parseRange(response.result.updates.updatedRange).firstRowIndex,
       }
     });
   });
