@@ -1,10 +1,11 @@
 // @flow
 import type {Todo} from './Todo';
 import * as React from 'react';
-import {get} from './sheetsApi';
+import {fetch, append} from './sheetsApi';
 const {useReducer, useState, useEffect} = React;
 
 type State = $ReadOnly<{|
+    isAppending: boolean,
     isLoading: boolean,
     isError: boolean,
     todos: $ReadOnlyArray<Todo>,
@@ -23,9 +24,22 @@ type FetchFailureAction = $ReadOnly<{|
     type: 'FETCH_FAILURE',
 |}>;
 
-type Action = FetchInitAction | FetchSuccessAction | FetchFailureAction;
+type AppendInitAction = $ReadOnly<{|
+    type: 'APPEND_INIT',
+|}>;
 
-const dataFetchReducer = (state: State, action: Action) => {
+type AppendSuccessAction = $ReadOnly<{|
+    type: 'APPEND_SUCCESS',
+    payload: Todo,
+|}>;
+
+type Action = FetchInitAction 
+  | FetchSuccessAction 
+  | FetchFailureAction 
+  | AppendInitAction
+  | AppendSuccessAction
+
+const dataFetchReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'FETCH_INIT':
       return {
@@ -46,6 +60,20 @@ const dataFetchReducer = (state: State, action: Action) => {
         isLoading: false,
         isError: true,
       };
+    case 'APPEND_INIT': 
+      return {
+        ...state,
+        isAppending: true,
+      };
+    case 'APPEND_SUCCESS': 
+      return {
+        ...state,
+        isAppending: false,
+        todos: [
+          ...state.todos,
+          action.payload,
+        ]
+      };
     default:
       throw new Error();
   }
@@ -54,10 +82,11 @@ const dataFetchReducer = (state: State, action: Action) => {
 const useDataApi = () => {
   const [url, setUrl] = useState<string>('');
 
-  const [state, dispatch] = useReducer(dataFetchReducer, {
+  const [state, dispatch] = useReducer<State, Action>(dataFetchReducer, {
+    isAppending: false,
     isLoading: false,
     isError: false,
-    todos: [],
+    todos: ([]: $ReadOnlyArray<Todo>),
   });
 
 
@@ -67,7 +96,7 @@ const useDataApi = () => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_INIT' });
       try {
-        get().then(todos => {
+        fetch().then(todos => {
             if (!didCancel) {
               dispatch({
                 type: 'FETCH_SUCCESS',
@@ -91,7 +120,17 @@ const useDataApi = () => {
     };
   }, [url]);
 
-  return [state, setUrl];
+  function addTodo() {
+    dispatch({ type: 'APPEND_INIT' })
+    append().then(todo => {
+      dispatch({
+        type: 'APPEND_SUCCESS',
+        payload: todo,
+      })
+    })
+  }
+
+  return [state, setUrl, addTodo];
 };
 
 export default useDataApi;

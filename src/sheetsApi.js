@@ -41,7 +41,7 @@ function getGAPI(): Promise<GAPI> {
 
 const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
 
-export function get(): Promise<$ReadOnlyArray<Todo>> {
+export function fetch(): Promise<$ReadOnlyArray<Todo>> {
 
   return getGAPI().then(gapi => {
     return gapi.client.sheets.spreadsheets.values.get({
@@ -84,4 +84,22 @@ export function get(): Promise<$ReadOnlyArray<Todo>> {
       }).filter(Boolean);
     });
   });
+}
+
+export function append(): Promise<Todo> {
+  return new Promise(resolve => {
+    const todo: Todo = {
+      id: '2423423424',
+      row: 123123,
+      text: 'text tet',
+      completedAt: '', 
+      userId: '', 
+      isDeleted: false,
+      createdAt: '',
+      updatedAt: '',
+    };
+    setTimeout(() => {
+      resolve(todo);
+    }, 3000);
+  })
 }

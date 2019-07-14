@@ -3,7 +3,7 @@ import * as React from 'react';
 import useDataApi from './useDataApi';
 
 function App() {
-  const [state, setUrl] = useDataApi();
+  const [state, setUrl, addTodo] = useDataApi();
 
 console.log(state);
   if (state.isLoading) {
@@ -14,7 +14,9 @@ console.log(state);
     return <div>Error...</div>;
   }
 
-  
+  function handleAddClick() {
+    addTodo();
+  }
   
   return (
     <>
@@ -23,6 +25,8 @@ console.log(state);
           {todo.id} {todo.text}
         </div>
       ))}
+      {state.isAppending ? 'Appending...' : <button onClick={handleAddClick}>Add</button>}
+      
     </>
   )
 }
