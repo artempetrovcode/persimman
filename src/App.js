@@ -5,6 +5,7 @@ import useDataApi from './useDataApi';
 function App() {
   const [state, setUrl] = useDataApi();
 
+console.log(state);
   if (state.isLoading) {
     return <div>Loading...</div>;
   }
@@ -12,11 +13,13 @@ function App() {
   if (state.isError) {
     return <div>Error...</div>;
   }
+
+  
   
   return (
     <>
       {state.todos.map(todo => (
-        <div>
+        <div key={todo.id}>
           {todo.id} {todo.text}
         </div>
       ))}

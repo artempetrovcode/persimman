@@ -75,7 +75,8 @@
       if (isSignedIn) {
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
-        listMajors();
+        // listMajors();
+        window.__isGoogleLoadedAndAuthorized = true;
       } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
