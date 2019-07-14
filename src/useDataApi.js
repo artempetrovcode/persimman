@@ -122,7 +122,18 @@ const useDataApi = () => {
 
   function addTodo() {
     dispatch({ type: 'APPEND_INIT' })
-    append().then(todo => {
+
+    const todo: Todo = {
+        id: Math.random().toString(),
+        row: 123123,
+        text: 'text tet',
+        completedAt: '', 
+        userId: '', 
+        isDeleted: false,
+        createdAt: '',
+        updatedAt: '',
+      };
+    append(todo).then(todo => {
       dispatch({
         type: 'APPEND_SUCCESS',
         payload: todo,
