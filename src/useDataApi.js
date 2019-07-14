@@ -2,7 +2,37 @@
 import * as React from 'react';
 const {useReducer, useState, useEffect} = React;
 
-const dataFetchReducer = (state, action) => {
+type Todo = $ReadOnly<{|
+  id: string,
+  text: string,
+  completedAt: string,
+  isDeleted: boolean,
+  createdAt: string,
+  completedAt: string,
+|}>;
+
+type State = $ReadOnly<{|
+    isLoading: boolean,
+    isError: boolean,
+    todos: $ReadOnlyArray<Todo>,
+|}>;
+
+type FetchInitAction = $ReadOnly<{|
+    type: 'FETCH_INIT',
+|}>;
+
+type FetchSuccessAction = $ReadOnly<{|
+    type: 'FETCH_SUCCESS',
+    payload: $ReadOnlyArray<Todo>,
+|}>;
+
+type FetchFailureAction = $ReadOnly<{|
+    type: 'FETCH_FAILURE',
+|}>;
+
+type Action = FetchInitAction | FetchSuccessAction | FetchFailureAction;
+
+const dataFetchReducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'FETCH_INIT':
       return {
@@ -15,7 +45,7 @@ const dataFetchReducer = (state, action) => {
         ...state,
         isLoading: false,
         isError: false,
-        data: action.payload,
+        todos: action.payload,
       };
     case 'FETCH_FAILURE':
       return {
@@ -28,13 +58,13 @@ const dataFetchReducer = (state, action) => {
   }
 };
 
-const useDataApi = (initialUrl: string, initialData: {}) => {
-  const [url, setUrl] = useState<string>(initialUrl);
+const useDataApi = () => {
+  const [url, setUrl] = useState<string>('');
 
   const [state, dispatch] = useReducer(dataFetchReducer, {
     isLoading: false,
     isError: false,
-    data: initialData,
+    todos: [],
   });
 
   useEffect(() => {
@@ -42,12 +72,17 @@ const useDataApi = (initialUrl: string, initialData: {}) => {
 
     const fetchData = async () => {
       dispatch({ type: 'FETCH_INIT' });
-
       try {
 		  setTimeout(() => {
-			const result = { data: { response: 200 } };	  
-			if (!didCancel) {
-         	 dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+			  if (!didCancel) {
+         	 dispatch({ type: 'FETCH_SUCCESS', payload: [{
+            id: '006a35c7-1f82-449a-b657-90ec2325350b',
+            text: '@diet healthy brunch snack',
+            completedAt: '2019-06-18 5:17:30',
+            isDeleted: false,
+            createdAt: '2019-06-18 5:17:30',
+            completedAt: '2019-06-18 5:18:21',
+            }] });
         	}
 		  }, 3000);
         // const result = await axios(url);

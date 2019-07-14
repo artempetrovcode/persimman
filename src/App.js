@@ -3,11 +3,25 @@ import * as React from 'react';
 import useDataApi from './useDataApi';
 
 function App() {
-	const [state, setUrl] = useDataApi('', { initial: true });
+  const [state, setUrl] = useDataApi();
 
-  console.log('state', state);
+  if (state.isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  return <div>hello</div>;
+  if (state.isError) {
+    return <div>Error...</div>;
+  }
+  
+  return (
+    <>
+      {state.todos.map(todo => (
+        <div>
+          {todo.id} {todo.text}
+        </div>
+      ))}
+    </>
+  )
 }
 
 export default App;
