@@ -38,7 +38,26 @@ type GAPI = $ReadOnly<{|
             result: $ReadOnly<{|
               values: $ReadOnlyArray<$ReadOnlyArray<string>>,
             |}>
-          |}>>
+          |}>>,
+          update: (
+            params: $ReadOnly<{|
+              spreadsheetId: string,
+              range: string,
+              valueInputOption: string,
+            |}>,
+            valueRangeBody: $ReadOnly<{|
+              range: string,
+              majorDimension: string,
+              values: $ReadOnlyArray<$ReadOnlyArray<string>>,
+            |}>) => Promise<$ReadOnly<{|
+            result: $ReadOnly<{|
+              spreadsheetId: string,
+              updatedCells: number,
+              updatedColumns: number,
+              updatedRange: string,
+              updatedRows: number,
+            |}>
+          |}>>,
         |}>
       |}>
     |}>
@@ -183,6 +202,7 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
           typeof createdAt === 'string' &&
           typeof updatedAt === 'string'
         ) {
+          // todo throw on invalid rows
           idToRowIndexCache.set(id, index + 2);
 
           return ({
@@ -237,6 +257,63 @@ export function append(todo: Todo): Promise<Todo> {
 
       const rowIndex = parseRange(response.result.updates.updatedRange).firstRowIndex;
       idToRowIndexCache.set(todo.id, rowIndex);
+
+      return {
+        ...todo,
+      }
+    });
+  });
+}
+
+export function update(todo: Todo): Promise<Todo> {
+
+  const rowIndex = idToRowIndexCache.get(todo.id);
+  if (rowIndex == null) {
+    throw new Error(`id ${todo.id} is not in cache`);
+  }
+  const range = getRange({
+    sheetName: SHEET_NAME,
+    firstColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX],
+    firstRowIndex: rowIndex,
+    lastColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX + NUMBER_OF_COLUMNS - 1],
+    lastRowIndex: rowIndex,
+  });
+
+  return getGAPI().then((gapi: GAPI) => {
+    return gapi.client.sheets.spreadsheets.values.update(
+      {
+        spreadsheetId: SPREADSHEET_ID,
+        range,
+        valueInputOption: 'RAW',
+      },
+      {
+        range,
+        majorDimension: 'ROWS',
+          values: [
+            [
+              todo.id,
+              todo.text,
+              todo.completedAt,
+              todo.userId,
+              todo.isDeleted ? '1' : '0',
+              todo.createdAt,
+              todo.updatedAt,
+          ]
+        ],
+      }
+    ).then(function(response) {      
+      console.info('UPDATE', response);
+      if (response == null || response.result == null || 
+        response.result.updatedRows !== 1 ||
+        typeof response.result.updatedRange !== 'string'
+      ) {
+        throw new Error('Cannot update todo');
+      }
+
+      const updatedRowIndex = parseRange(response.result.updatedRange).firstRowIndex;
+      if (updatedRowIndex !== rowIndex) {
+        throw new Error('Updated row index does not match requested');
+      }
 
       return {
         ...todo,

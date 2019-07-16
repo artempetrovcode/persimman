@@ -1,13 +1,14 @@
 // @flow
 import type {Todo} from './Todo';
 import * as React from 'react';
-import {fetch, append} from './sheetsApi';
+import {fetch, append, update} from './sheetsApi';
 const {useReducer, useState, useEffect} = React;
 
 type State = $ReadOnly<{|
     isAppending: boolean,
-    isLoading: boolean,
     isError: boolean,
+    isLoading: boolean,
+    isUpdating: boolean,
     todos: $ReadOnlyArray<Todo>,
 |}>;
 
@@ -33,13 +34,25 @@ type AppendSuccessAction = $ReadOnly<{|
     payload: Todo,
 |}>;
 
+type UpdateInitAction = $ReadOnly<{|
+    type: 'UPDATE_INIT',
+|}>;
+
+type UpdateSuccessAction = $ReadOnly<{|
+    type: 'UPDATE_SUCCESS',
+    payload: Todo,
+|}>;
+
 type Action = FetchInitAction 
   | FetchSuccessAction 
   | FetchFailureAction 
   | AppendInitAction
   | AppendSuccessAction
+  | UpdateInitAction
+  | UpdateSuccessAction
 
 const dataFetchReducer = (state: State, action: Action): State => {
+  console.warn(action.type)
   switch (action.type) {
     case 'FETCH_INIT':
       return {
@@ -74,6 +87,22 @@ const dataFetchReducer = (state: State, action: Action): State => {
           action.payload,
         ]
       };
+    case 'UPDATE_INIT': 
+      return {
+        ...state,
+        isUpdating: true,
+      };
+    case 'UPDATE_SUCCESS': 
+      return {
+        ...state,
+        isUpdating: false,
+        todos: state.todos.map(todo => {
+          if (todo.id === action.payload.id) {
+            return action.payload;
+          }
+          return todo;
+        })
+      };
     default:
       throw new Error();
   }
@@ -86,6 +115,7 @@ const useDataApi = () => {
     isAppending: false,
     isLoading: false,
     isError: false,
+    isUpdating: false,
     todos: ([]: $ReadOnlyArray<Todo>),
   });
 
@@ -120,11 +150,9 @@ const useDataApi = () => {
     };
   }, [url]);
 
-  function addTodo() {
-    dispatch({ type: 'APPEND_INIT' })
-
+  function generateTodo(id): Todo {
     const todo: Todo = {
-        id: Math.random().toString(),
+        id: id,
         text: 'text tet',
         completedAt: '', 
         userId: 'sfsd', 
@@ -132,6 +160,13 @@ const useDataApi = () => {
         createdAt: 'sfsdf',
         updatedAt: 'sdfsf',
       };
+
+      return todo;
+  }
+
+  function addTodo() {
+    dispatch({ type: 'APPEND_INIT' })
+    const todo = generateTodo(Math.random().toString());
     append(todo).then(todo => {
       dispatch({
         type: 'APPEND_SUCCESS',
@@ -140,7 +175,17 @@ const useDataApi = () => {
     })
   }
 
-  return [state, setUrl, addTodo];
+  function updateTodo(todo: Todo) {
+    dispatch({ type: 'UPDATE_INIT' })
+    update(todo).then(todo => {
+      dispatch({
+        type: 'UPDATE_SUCCESS',
+        payload: todo,
+      })
+    })
+  }
+
+  return [state, setUrl, addTodo, updateTodo];
 };
 
 export default useDataApi;

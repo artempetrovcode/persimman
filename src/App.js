@@ -3,7 +3,7 @@ import * as React from 'react';
 import useDataApi from './useDataApi';
 
 function App() {
-  const [state, setUrl, addTodo] = useDataApi();
+  const [state, setUrl, addTodo, updateTodo] = useDataApi();
 
 console.log(state);
   if (state.isLoading) {
@@ -25,9 +25,17 @@ console.log(state);
         <div key={todo.id}>
           {todo.id} {todo.text}
           [ {todo.completedAt === '' ? 'not completed' : todo.completedAt } ]
-          <button>
-            complete
-          </button>
+
+          {state.isUpdating ? '[ updating... ]' : 
+            <button onClick={() => {
+              updateTodo({
+                ...todo,
+                completedAt: todo.completedAt === '' ? 'completed' : '',
+              })
+            }}>
+              complete
+            </button>
+          }
         </div>
       ))}
       {state.isAppending ? 'Appending...' : <button onClick={handleAddClick}>Add</button>}
