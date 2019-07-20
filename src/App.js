@@ -1,45 +1,30 @@
 // @flow
 import * as React from 'react';
-import useDataApi from './useDataApi';
+import CalendarView from './CalendarView/CalendarView';
+import GoalsView from './GoalsView/GoalsView';
+import TodoListView from './TodoListView/TodoListView';
+
+const {useState} = React;
+
+type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
 
 function App() {
-  const [state, setUrl, addTodo, updateTodo] = useDataApi();
+  const [view, setView] = useState<View>('TODO_LIST');
 
-console.log(state);
-  if (state.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (state.isError) {
-    return <div>Error...</div>;
-  }
-
-  function handleAddClick() {
-    addTodo();
-  }
-  
-  console.log(state)
   return (
     <>
-      {state.todos.map(todo => (
-        <div key={todo.id}>
-          {todo.id} {todo.text}
-          [ {todo.completedAt === '' ? 'not completed' : todo.completedAt } ]
-
-          {state.isUpdating ? '[ updating... ]' : 
-            <button onClick={() => {
-              updateTodo({
-                ...todo,
-                completedAt: todo.completedAt === '' ? 'completed' : '',
-              })
-            }}>
-              complete
-            </button>
-          }
-        </div>
-      ))}
-      {state.isAppending ? 'Appending...' : <button onClick={handleAddClick}>Add</button>}
-      
+      <div style={{margin: '1em'}}>
+        <button onClick={() => setView('TODO_LIST')}>Show Todos</button>
+        <button onClick={() => setView('GOALS')}>Show Goals</button>
+        <button onClick={() => setView('CALENDAR')}>Show Calendar</button>
+      </div>
+      {
+        view === 'GOALS' ?
+          <GoalsView /> :
+          view === 'CALENDAR' ?
+          <CalendarView /> :
+          <TodoListView />
+      }
     </>
   )
 }
