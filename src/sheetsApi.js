@@ -239,7 +239,7 @@ export function append(todo: Todo): Promise<Todo> {
               todo.text,
               todo.completedAt,
               todo.userId,
-              todo.isDeleted ? '1' : '0',
+              JSON.stringify(todo.isDeleted ? 1 : 0),
               todo.createdAt,
               todo.updatedAt,
           ]

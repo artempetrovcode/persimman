@@ -65,7 +65,7 @@ const dataFetchReducer = (state: State, action: Action): State => {
         ...state,
         isLoading: false,
         isError: false,
-        todos: action.payload,
+        todos: action.payload.filter(todo => !todo.isDeleted),
       };
     case 'FETCH_FAILURE':
       return {
@@ -85,7 +85,7 @@ const dataFetchReducer = (state: State, action: Action): State => {
         todos: [
           ...state.todos,
           action.payload,
-        ]
+        ].filter(todo => !todo.isDeleted)
       };
     case 'UPDATE_INIT': 
       return {
@@ -101,7 +101,7 @@ const dataFetchReducer = (state: State, action: Action): State => {
             return action.payload;
           }
           return todo;
-        })
+        }).filter(todo => !todo.isDeleted)
       };
     default:
       throw new Error();
@@ -186,7 +186,39 @@ const useDataApi = () => {
     })
   }
 
-  return [state, setUrl, addTodo, updateTodo, fetchData, dispatch];
+  function updateTodoText(todo: Todo, text: string) {
+    updateTodo({
+      ...todo,
+      text,
+    })
+  }
+
+  function updateTodoStatus(todo: Todo, isCompleted: boolean) {
+    updateTodo({
+      ...todo,
+      completedAt: isCompleted ? String(Date.now()) : '',
+    })
+  }
+
+  function deleteTodo(todo: Todo) {
+    updateTodo({
+      ...todo,
+      isDeleted: true,
+    })
+  }
+  
+
+  return {
+    state, 
+    setUrl, 
+    addTodo, 
+    updateTodo, 
+    fetchData, 
+    dispatch, 
+    updateTodoStatus,
+    updateTodoText,
+    deleteTodo,
+  };
 };
 
 export default useDataApi;

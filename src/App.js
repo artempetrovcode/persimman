@@ -13,7 +13,15 @@ type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
 
 function App() {
   const [view, setView] = useState<View>('TODO_LIST');
-  const [state, setUrl, addTodo, updateTodo, fetchData, dispatch] = useDataApi();
+  const {
+    state,
+    addTodo,
+    updateTodo,
+    fetchData, 
+    updateTodoStatus,
+    deleteTodo,
+    updateTodoText,
+  } = useDataApi();
 
   useEffect(fetchData, []);
 
@@ -21,6 +29,9 @@ function App() {
     <DispatchContext.Provider value={{
       addTodo,
       updateTodo,
+      updateTodoStatus,
+      deleteTodo,
+      updateTodoText,
     }}>
       <StateContext.Provider value={state}>
         <div style={{margin: '1em'}}>
@@ -34,6 +45,17 @@ function App() {
             view === 'CALENDAR' ?
             <CalendarView /> :
             <TodoListView />
+        }
+        {(state.isLoading || state.isUpdating || state.isAppending) ? 
+            <div style={{
+            position: 'fixed', 
+            background: 'gray', 
+            opacity: 0.5,
+            width: '100%',
+            height: '100%',
+            top: 0,
+            left: 0,
+          }}></div> : null
         }
       </StateContext.Provider>
     </DispatchContext.Provider>

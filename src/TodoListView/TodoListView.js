@@ -2,13 +2,19 @@
 import * as React from 'react';
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
-// import useDataApi from '../useDataApi';
-const {useContext} = React;
+import TodoItem from './TodoItem';
+
+const {useContext, useState} = React;
+const ENTER_KEY_CODE = 13;
+const SEARCH_WAIT_MS = 1000;
 
 function TodoListView() {
-  // const [state, setUrl, addTodo, updateTodo] = useDataApi();
   const state = useContext(StateContext)
   const {addTodo, updateTodo} = useContext(DispatchContext);
+  const [search, setSearch] = useState('');
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [text, setText] = useState('');
+  const [lastTimeoutId, setLastTimeoutId] = useState(null);
 
   console.log(state);
   if (state.isLoading) {
@@ -25,6 +31,12 @@ function TodoListView() {
   
   return (
     <>
+      {/* TOOD add all above */}
+      <ul>
+        {state.todos.map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
+      </ul>
+
+      <hr/>
       {state.todos.map(todo => (
         <div key={todo.id}>
           {todo.id} {todo.text}
