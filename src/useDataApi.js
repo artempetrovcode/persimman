@@ -120,10 +120,9 @@ const useDataApi = () => {
   });
 
 
-  useEffect(() => {
-    let didCancel = false;
-
-    const fetchData = async () => {
+  // useEffect(() => {
+    const fetchData = () => {
+      let didCancel = false;
       dispatch({ type: 'FETCH_INIT' });
       try {
         fetch().then(todos => {
@@ -141,14 +140,16 @@ const useDataApi = () => {
           dispatch({ type: 'FETCH_FAILURE' });
         }
       }
+
+      return () => {
+        didCancel = true;
+      };
     };
 
-    fetchData();
+    // return fetchData();
+  // }, [url]);
 
-    return () => {
-      didCancel = true;
-    };
-  }, [url]);
+
 
   function generateTodo(id): Todo {
     const todo: Todo = {
@@ -185,7 +186,7 @@ const useDataApi = () => {
     })
   }
 
-  return [state, setUrl, addTodo, updateTodo];
+  return [state, setUrl, addTodo, updateTodo, fetchData, dispatch];
 };
 
 export default useDataApi;

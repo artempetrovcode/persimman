@@ -1,9 +1,14 @@
 // @flow
 import * as React from 'react';
-import useDataApi from '../useDataApi';
+import StateContext from '../StateContext';
+import DispatchContext from '../DispatchContext';
+// import useDataApi from '../useDataApi';
+const {useContext} = React;
 
 function TodoListView() {
-  const [state, setUrl, addTodo, updateTodo] = useDataApi();
+  // const [state, setUrl, addTodo, updateTodo] = useDataApi();
+  const state = useContext(StateContext)
+  const {addTodo, updateTodo} = useContext(DispatchContext);
 
   console.log(state);
   if (state.isLoading) {
@@ -18,7 +23,6 @@ function TodoListView() {
     addTodo();
   }
   
-  console.log(state)
   return (
     <>
       {state.todos.map(todo => (
