@@ -6,15 +6,76 @@ import TodoItem from './TodoItem';
 
 const {useContext, useState} = React;
 const ENTER_KEY_CODE = 13;
-const SEARCH_WAIT_MS = 1000;
+const SEARCH_WAIT_MS = 10;
 
 function TodoListView() {
   const state = useContext(StateContext)
   const {addTodo, updateTodo} = useContext(DispatchContext);
-  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
+  const [search, setSearch] = useState(query);
   const [showCompleted, setShowCompleted] = useState(true);
   const [text, setText] = useState('');
   const [lastTimeoutId, setLastTimeoutId] = useState(null);
+
+  function handleTextChange(e) {
+    setText(e.target.value);
+  }
+
+  function handleAddClick() {
+   /* if (text !== '') {
+      AddTodoMutation.commit(
+        props.relay.environment,
+        text,
+        false,
+        props.user.id,
+        search,
+      );
+      setText('');
+    }*/
+  }
+
+  function handleKeyDown(e) {
+    if (e.keyCode === ENTER_KEY_CODE) {
+      handleAddClick();
+    }
+  }
+
+  function handleSeachChange(e) {
+    const value = e.target.value;
+    lastTimeoutId && window.clearTimeout(lastTimeoutId);
+    setSearch(value);
+    setLastTimeoutId(window.setTimeout(() => setQuery(value), SEARCH_WAIT_MS))
+  }
+
+  function handleClearClick() {
+    lastTimeoutId && window.clearTimeout(lastTimeoutId);
+    setSearch('');
+    setQuery('')
+  }
+
+  function handleQuickAdd(value) {
+    /*AddTodoMutation.commit(
+      props.relay.environment,
+      value,
+      true,
+      props.user.id,
+      search,
+    );*/
+  }
+
+  const quickButtons = [
+    '@diet balanced breakfast',
+    '@diet balanced lunch',
+    '@diet balanced dinner',
+    '@diet oatmeal breakfast',
+    '@diet healthy brunch',
+    '@diet haalthy afternoon snack',
+    '@flexibility 30 min stretch',
+    '@flexibility yoga',
+    '@gym 60 min treadmill',
+    '@gym 60 min session',
+    '@anki review',
+  ];
 
   console.log(state);
   if (state.isLoading) {
@@ -24,38 +85,40 @@ function TodoListView() {
   if (state.isError) {
     return <div>Error...</div>;
   }
-
-  function handleAddClick() {
-    addTodo();
-  }
   
   return (
     <>
       {/* TOOD add all above */}
-      <ul>
-        {state.todos.map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
-      </ul>
-
-      <hr/>
-      {state.todos.map(todo => (
-        <div key={todo.id}>
-          {todo.id} {todo.text}
-          [ {todo.completedAt === '' ? 'not completed' : todo.completedAt } ]
-
-          {state.isUpdating ? '[ updating... ]' : 
-            <button onClick={() => {
-              updateTodo({
-                ...todo,
-                completedAt: todo.completedAt === '' ? 'completed' : '',
-              })
-            }}>
-              complete
-            </button>
+      <div>
+        Search
+        <input 
+          type="text"
+          value={search}
+          onChange={handleSeachChange}
+        />
+        <button onClick={handleClearClick}>Clear Search</button>
+        <label> 
+          <input 
+            type="checkbox" 
+            checked={showCompleted}
+            onChange={e => setShowCompleted(e.target.checked)}
+          />
+          Show Completed
+        </label>
+      </div>
+      <ul>`
+        {state.todos.filter(todo => {
+          const isMatch = todo.text.match(query);
+          if (!isMatch) {
+            return false;
           }
-        </div>
-      ))}
-      {state.isAppending ? 'Appending...' : <button onClick={handleAddClick}>Add</button>}
-      
+          if (showCompleted) {
+            return true;
+          } else {
+            return todo.completedAt === '';
+          }
+        }).map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
+      </ul>
     </>
   )
 }
