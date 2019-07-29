@@ -152,8 +152,21 @@ const useDataApi = () => {
 
 
 
+function daysAgo(d) {
+  const now = Date.now();
+  const ago = now - (1000 * 60 * 60 * 24 * d);
+  console.log(new Date(ago), ago);
+  return ago;
+}
   function createTodo(text: string, isCompleted: boolean): Todo {
-    const now = Date.now();
+    let now;
+    if (window.location.search.match(/\?ago=\d+/)) {
+      const ago = Number(window.location.search.match(/\?ago=(\d+)/)[1]);
+      now = daysAgo(ago);
+    } else {
+      now = Date.now();
+    }
+    
     const todo: Todo = {
       id: uuidv4(),
       text,

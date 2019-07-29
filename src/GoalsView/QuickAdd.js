@@ -15,7 +15,7 @@ type Props = {|
   goal: string,
 |}
 
-function Goal({goal}: Props) {
+function QuickAdd({goal}: Props) {
   const state = useContext(StateContext);
   const {addTodo} = useContext(DispatchContext);
   const [selected, setSelected] = useState(SELECT_GOAL);
@@ -63,4 +63,4 @@ function Goal({goal}: Props) {
   );
 }
 
-export default Goal;
+export default QuickAdd;

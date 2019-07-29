@@ -48,16 +48,17 @@ function TodoListView() {
   }
 
   function handleQuickAdd(text: string) {
-    addTodo(text);
+    addTodo(text, true);
   }
 
   const quickButtons = [
     '@diet balanced breakfast',
-    '@diet balanced lunch',
-    '@diet balanced dinner',
-    '@diet oatmeal breakfast',
     '@diet healthy brunch',
-    '@diet haalthy afternoon snack',
+    '@diet balanced lunch',
+    '@diet healthy afternoon snack',
+    '@diet balanced dinner',
+    '@diet no evening snacks',
+    '@diet oatmeal breakfast',
     '@flexibility 30 min stretch',
     '@flexibility yoga',
     '@gym 60 min treadmill',

@@ -1,7 +1,7 @@
 // @flow
 import type {Todo} from '../Todo';
 import * as React from 'react';
-import {getDateForThisZone, getDayTimestampForThisZone, getDayTimestampForThisZone2} from '../lib/timeUtils';
+import {getDateForThisZone, getDayTimestampForThisZone2} from '../lib/timeUtils';
 import StateContext from '../StateContext';
 
 const {useContext} = React;
@@ -10,7 +10,7 @@ function CalendarView() {
   const state = useContext(StateContext);
 
   const groupedByDate = {
-    [getDayTimestampForThisZone(Date.now())]: [],
+    [getDayTimestampForThisZone2(Date.now())]: [],
   };
 
   state.todos

@@ -2,7 +2,8 @@
 import type {Todo} from '../Todo';
 import * as React from 'react';
 import StateContext from '../StateContext';
-import Goal from './Goal';
+import QuickAdd from './QuickAdd';
+import Stats from './Stats';
 
 const {useContext} = React;
 
@@ -24,7 +25,12 @@ function GoalsView() {
 
   return (
     <>
-      {Object.keys(uniqueGoals).map(goal => <Goal key={goal} goal={goal} />  )}
+      {Object.keys(uniqueGoals).map(goal => 
+        <div key={goal} style={{borderBottom: '1px solid', marginTop: '10px'}}>
+          <QuickAdd goal={goal} />
+          <Stats goal={goal} />
+        </div>
+      )}
     </>
   );
 }
