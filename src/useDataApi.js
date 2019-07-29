@@ -152,12 +152,12 @@ const useDataApi = () => {
 
 
 
-  function createTodo(text: string): Todo {
+  function createTodo(text: string, isCompleted: boolean): Todo {
     const now = Date.now();
     const todo: Todo = {
       id: uuidv4(),
       text,
-      completedAt: '',  
+      completedAt: isCompleted ? now : null,  
       isDeleted: false,
       createdAt: now,
       updatedAt: now,
@@ -165,9 +165,9 @@ const useDataApi = () => {
     return todo;
   }
 
-  function addTodo(text: string) {
+  function addTodo(text: string, isCompleted: boolean) {
     dispatch({ type: 'APPEND_INIT' })
-    const todo = createTodo(text);
+    const todo = createTodo(text, isCompleted);
     append(todo).then(todo => {
       dispatch({
         type: 'APPEND_SUCCESS',

@@ -9,7 +9,7 @@ const ENTER_KEY_CODE = 13;
 const SEARCH_WAIT_MS = 10;
 
 function TodoListView() {
-  const state = useContext(StateContext)
+  const state = useContext(StateContext);
   const {addTodo, updateTodo} = useContext(DispatchContext);
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState(query);
