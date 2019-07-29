@@ -90,7 +90,15 @@ function getGAPI(): Promise<GAPI> {
 const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
 const SHEET_NAME = 'todo';
 const FIRST_COLUMN_INDEX = 1; // 1-based
-const NUMBER_OF_COLUMNS = 7;
+const COLUMN_NAMES_IN_ORDER = [
+  'id',          // 0
+  'text',        // 1
+  'completedAt', // 2
+  'isDeleted',   // 3
+  'createdAt',   // 4
+  'updatedAt',   // 5
+]
+const NUMBER_OF_COLUMNS = COLUMN_NAMES_IN_ORDER.length + 1;
 const FIRST_ROW_INDEX = 2; // 1-based
 const COLUMN_INDEX_TO_CODE = {
   1: 'A',
@@ -193,11 +201,10 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
           return undefined;
         }
 
-        const [id, text, completedAt, userId, isDeleted, createdAt, updatedAt] = value;
+        const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
         if (typeof id === 'string' &&
           typeof text === 'string' &&
           typeof completedAt === 'string' &&
-          typeof userId === 'string' && 
           typeof isDeleted === 'string' &&
           typeof createdAt === 'string' &&
           typeof updatedAt === 'string'
@@ -209,7 +216,6 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
             id,
             text,
             completedAt, 
-            userId, 
             isDeleted: isDeleted === '1',
             createdAt,
             updatedAt
@@ -238,7 +244,6 @@ export function append(todo: Todo): Promise<Todo> {
               todo.id,
               todo.text,
               todo.completedAt,
-              todo.userId,
               JSON.stringify(todo.isDeleted ? 1 : 0),
               todo.createdAt,
               todo.updatedAt,
@@ -294,7 +299,6 @@ export function update(todo: Todo): Promise<Todo> {
               todo.id,
               todo.text,
               todo.completedAt,
-              todo.userId,
               todo.isDeleted ? '1' : '0',
               todo.createdAt,
               todo.updatedAt,
