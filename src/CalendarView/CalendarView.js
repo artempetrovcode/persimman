@@ -4,8 +4,6 @@ import * as React from 'react';
 import {getDateForThisZone, getDayTimestampForThisZone, getDayTimestampForThisZone2} from '../lib/timeUtils';
 import StateContext from '../StateContext';
 
-window._getDateForThisZone = getDateForThisZone;
-window._getDayTimestampForThisZone = getDayTimestampForThisZone;
 const {useContext} = React;
 
 function CalendarView() {
