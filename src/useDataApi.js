@@ -157,23 +157,13 @@ const useDataApi = () => {
     const todo: Todo = {
       id: uuidv4(),
       text,
-      completedAt: '', 
-      userId: 'artempetrov', 
+      completedAt: '',  
       isDeleted: false,
       createdAt: now,
       updatedAt: now,
     };
     return todo;
   }
-
-  /*
-  id: string,
-  text: string,
-  userId: string,
-  completedAt: string,
-  isDeleted: boolean,
-  createdAt: string,
-  updatedAt: string,*/
 
   function addTodo(text: string) {
     dispatch({ type: 'APPEND_INIT' })
