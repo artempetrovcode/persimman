@@ -209,16 +209,17 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
           typeof createdAt === 'string' &&
           typeof updatedAt === 'string'
         ) {
+          // todo validate completedAt and other dates
           // todo throw on invalid rows
           idToRowIndexCache.set(id, index + 2);
 
           return ({
             id,
             text,
-            completedAt, 
+            completedAt: completedAt === '' ? null : Number(completedAt), 
             isDeleted: isDeleted === '1',
-            createdAt,
-            updatedAt
+            createdAt: Number(createdAt),
+            updatedAt: Number(updatedAt),
           }: Todo);
         }
       }).filter(Boolean);

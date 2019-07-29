@@ -48,7 +48,7 @@ function TodoItem({todo}: Props) {
     <li>
       <div>
         <input
-          checked={completedAt !== ''}
+          checked={completedAt != null}
           type="checkbox"
           onChange={handleCheckboxChange}
         />
@@ -59,7 +59,7 @@ function TodoItem({todo}: Props) {
             onChange={handleInputChange}
             initialValue={text} /> :
           <label onClick={handleLabelClick}>
-            {completedAt !== '' ? <s>{text}</s> : text}
+            {completedAt != null ? <s>{text}</s> : text}
           </label>
         }
         

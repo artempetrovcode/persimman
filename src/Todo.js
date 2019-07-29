@@ -1,8 +1,8 @@
 export type Todo = $ReadOnly<{|
   id: string,
   text: string,
-  completedAt: string,
+  completedAt: ?number,
   isDeleted: boolean,
-  createdAt: string,
-  updatedAt: string,
+  createdAt: number,
+  updatedAt: number,
 |}>;

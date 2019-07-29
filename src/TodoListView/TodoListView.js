@@ -126,7 +126,7 @@ function TodoListView() {
           Show Completed
         </label>
       </div>
-      <ul>`
+      <ul>
         {state.todos.filter(todo => {
           const isMatch = todo.text.match(query);
           if (!isMatch) {
@@ -135,7 +135,7 @@ function TodoListView() {
           if (showCompleted) {
             return true;
           } else {
-            return todo.completedAt === '';
+            return todo.completedAt == null;
           }
         }).map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
       </ul>
