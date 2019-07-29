@@ -22,16 +22,10 @@ function TodoListView() {
   }
 
   function handleAddClick() {
-   /* if (text !== '') {
-      AddTodoMutation.commit(
-        props.relay.environment,
-        text,
-        false,
-        props.user.id,
-        search,
-      );
+    if (text !== '') {
+      addTodo(text);
       setText('');
-    }*/
+    }
   }
 
   function handleKeyDown(e) {
@@ -53,14 +47,8 @@ function TodoListView() {
     setQuery('')
   }
 
-  function handleQuickAdd(value) {
-    /*AddTodoMutation.commit(
-      props.relay.environment,
-      value,
-      true,
-      props.user.id,
-      search,
-    );*/
+  function handleQuickAdd(text: string) {
+    addTodo(text);
   }
 
   const quickButtons = [
@@ -88,7 +76,39 @@ function TodoListView() {
   
   return (
     <>
-      {/* TOOD add all above */}
+      <div style={{
+        display:'flex', 
+        flexWrap: 'wrap', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        padding: '1em'
+      }}> 
+        {quickButtons.map((val, i) => (
+          <input
+            type="button"
+            onClick={() => handleQuickAdd(val)}
+            value={val} 
+            key={i} />
+        ))}      
+      </div>
+      <div style={{
+        display:'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        padding: '1em'
+      }}>
+        <input
+          type="text" 
+          value={text} 
+          onChange={handleTextChange}
+          onKeyDown={handleKeyDown}
+          style={{border:'1px solid', 'flex': 1}}
+        />
+        <button
+          onClick={handleAddClick}
+          style={{margin: '5px'}}
+        >Add</button>
+      </div>
       <div>
         Search
         <input 

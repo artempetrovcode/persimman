@@ -2,6 +2,7 @@
 import type {Todo} from './Todo';
 import * as React from 'react';
 import {fetch, append, update} from './sheetsApi';
+import uuidv4 from 'uuid/v4';
 const {useReducer, useState, useEffect} = React;
 
 type State = $ReadOnly<{|
@@ -151,23 +152,32 @@ const useDataApi = () => {
 
 
 
-  function generateTodo(id): Todo {
+  function createTodo(text: string): Todo {
+    const now = Date.now();
     const todo: Todo = {
-        id: id,
-        text: 'text tet',
-        completedAt: '', 
-        userId: 'sfsd', 
-        isDeleted: false,
-        createdAt: 'sfsdf',
-        updatedAt: 'sdfsf',
-      };
-
-      return todo;
+      id: uuidv4(),
+      text,
+      completedAt: '', 
+      userId: 'artempetrov', 
+      isDeleted: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+    return todo;
   }
 
-  function addTodo() {
+  /*
+  id: string,
+  text: string,
+  userId: string,
+  completedAt: string,
+  isDeleted: boolean,
+  createdAt: string,
+  updatedAt: string,*/
+
+  function addTodo(text: string) {
     dispatch({ type: 'APPEND_INIT' })
-    const todo = generateTodo(Math.random().toString());
+    const todo = createTodo(text);
     append(todo).then(todo => {
       dispatch({
         type: 'APPEND_SUCCESS',
