@@ -135,6 +135,9 @@ const useDataApi = () => {
             }
           }).catch(response => {
             console.log('Error', response);
+            if (!didCancel) {
+              dispatch({ type: 'FETCH_FAILURE' });
+            }
           })
       } catch (error) {
         if (!didCancel) {
