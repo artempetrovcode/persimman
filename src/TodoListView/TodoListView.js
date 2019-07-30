@@ -47,25 +47,6 @@ function TodoListView() {
     setQuery('')
   }
 
-  function handleQuickAdd(text: string) {
-    addTodo(text, true);
-  }
-
-  const quickButtons = [
-    '@diet balanced breakfast',
-    '@diet healthy brunch',
-    '@diet balanced lunch',
-    '@diet healthy afternoon snack',
-    '@diet balanced dinner',
-    '@diet no evening snacks',
-    '@diet oatmeal breakfast',
-    '@flexibility 30 min stretch',
-    '@flexibility yoga',
-    '@gym 60 min treadmill',
-    '@gym 60 min session',
-    '@anki review',
-  ];
-
   console.log(state);
   if (state.isLoading) {
     return <div>Loading...</div>;
@@ -84,13 +65,6 @@ function TodoListView() {
         alignItems: 'center', 
         padding: '1em'
       }}> 
-        {quickButtons.map((val, i) => (
-          <input
-            type="button"
-            onClick={() => handleQuickAdd(val)}
-            value={val} 
-            key={i} />
-        ))}      
       </div>
       <div style={{
         display:'flex', 
