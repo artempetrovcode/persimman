@@ -67,7 +67,7 @@ function Stats(props: Props) {
         <Bar goal={goal} goalsByDate={goalsByDate} groupedByDate={groupedByDate} />
       }      
       </div>
-      {isDetailed && Object.keys(groupedByDate).map(dayTimestamp => (
+      {isDetailed && Object.keys(groupedByDate).map(Number).sort((a,b) => b - a).map(dayTimestamp => (
         <div key={dayTimestamp}>
           <p>{(new Date(Number(dayTimestamp)).toDateString())}</p>
           <ul>

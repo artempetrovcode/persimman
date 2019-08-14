@@ -25,7 +25,7 @@ function CalendarView() {
 
   return (
     <>
-      {Object.keys(groupedByDate).map(dayTimestamp => (
+      {Object.keys(groupedByDate).map(Number).sort((a,b) => b - a).map(dayTimestamp => (
         <div key={dayTimestamp}>
           <p>{(new Date(Number(dayTimestamp)).toDateString())}</p>
           <ul>

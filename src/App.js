@@ -12,7 +12,7 @@ const {useState, useEffect} = React;
 type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
 
 function App() {
-  const [view, setView] = useState<View>('GOALS');
+  const [view, setView] = useState<View>('CALENDAR');
   const {
     state,
     addTodo,
