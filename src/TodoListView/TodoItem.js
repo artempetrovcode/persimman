@@ -46,7 +46,7 @@ function TodoItem({todo}: Props) {
 
   return (
     <li>
-      <div>
+      <div style={{display: 'flex'}}>
         <input
           checked={completedAt != null}
           type="checkbox"
@@ -54,11 +54,12 @@ function TodoItem({todo}: Props) {
         />
         {isEditing ?
           <TodoInput 
+            style={{flex:1}}
             onCancel={handleInputCancel}
             onDelete={handleInputDelete}
             onChange={handleInputChange}
             initialValue={text} /> :
-          <label onClick={handleLabelClick}>
+          <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}} onClick={handleLabelClick}>
             {completedAt != null ? <s>{text}</s> : text}
           </label>
         }
