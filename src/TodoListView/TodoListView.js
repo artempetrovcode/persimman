@@ -102,7 +102,7 @@ function TodoListView() {
         </label>
       </div>
       <ul>
-        {state.todos.filter(todo => {
+        {state.todos.slice().sort((a, b) => b.createdAt - a.createdAt).filter(todo => {
           const isMatch = todo.text.match(query);
           if (!isMatch) {
             return false;
