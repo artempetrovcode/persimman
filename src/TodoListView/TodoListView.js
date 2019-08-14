@@ -3,6 +3,7 @@ import * as React from 'react';
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import TodoItem from './TodoItem';
+import ResizableTextarea from '../ResizableTextarea';
 
 const {useContext, useState} = React;
 const ENTER_KEY_CODE = 13;
@@ -72,13 +73,7 @@ function TodoListView() {
         alignItems: 'center', 
         padding: '1em'
       }}>
-        <input
-          type="text" 
-          value={text} 
-          onChange={handleTextChange}
-          onKeyDown={handleKeyDown}
-          style={{border:'1px solid', 'flex': 1}}
-        />
+        <ResizableTextarea value={text} onChange={value => setText(value)}/>
         <button
           onClick={handleAddClick}
           style={{margin: '5px'}}

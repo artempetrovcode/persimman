@@ -1,14 +1,10 @@
 import * as React from 'react';
-const {useState, useRef, useEffect} = React;
+import ResizableTextarea from '../ResizableTextarea';
+
+const {useState} = React;
 
 function TodoInput(props) {
 	const [value, setValue] = useState(props.initialValue);
-	const inputRef = useRef();
-	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.focus();
-		}
-	});
 
 	function handleChange(e) {
 		setValue(e.target.value);
@@ -24,11 +20,11 @@ function TodoInput(props) {
 		}
 	}
 
-	return <input 
+	return <ResizableTextarea 
+		autofocus={true}
 		value={value} 
-		ref={inputRef} 
-		onChange={handleChange}
-		onBlur={handleBlur} />;
+		onBlur={handleBlur}
+		onChange={value => setValue(value)}/>
 } 
 
 export default TodoInput;
