@@ -13,7 +13,7 @@ function TodoListView() {
   const {addTodo, updateTodo} = useContext(DispatchContext);
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState(query);
-  const [showCompleted, setShowCompleted] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
   const [text, setText] = useState('');
   const [lastTimeoutId, setLastTimeoutId] = useState(null);
 

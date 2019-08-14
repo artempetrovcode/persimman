@@ -6,13 +6,14 @@ import TodoListView from './TodoListView/TodoListView';
 import useDataApi from './useDataApi';
 import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
+import useIsOnline from './useIsOnline';
 
 const {useState, useEffect} = React;
 
 type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
 
 function App() {
-  const [view, setView] = useState<View>('CALENDAR');
+  const [view, setView] = useState<View>('TODO_LIST');
   const {
     state,
     addTodo,
@@ -24,6 +25,8 @@ function App() {
   } = useDataApi();
 
   useEffect(fetchData, []);
+  const isOnline = useIsOnline();
+  
 
   return (
     <DispatchContext.Provider value={{
@@ -38,6 +41,7 @@ function App() {
           <button onClick={() => setView('TODO_LIST')}>Show Todos</button>
           <button onClick={() => setView('GOALS')}>Show Goals</button>
           <button onClick={() => setView('CALENDAR')}>Show Calendar</button>
+          <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
         </div>
         {
           view === 'GOALS' ?
