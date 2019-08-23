@@ -5,6 +5,7 @@ import * as React from 'react';
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import TodoInput from './TodoInput';
+import splitText from './splitText';
 
 const {useContext, useState} = React;
 
@@ -44,6 +45,13 @@ function TodoItem({todo}: Props) {
     setIsEditing(false);
   }
 
+  const style = {
+    fontWeight: 'bold', 
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  };
+  const spans = splitText(text, (t, index) => <span key={index}>{t}</span>, (t, index) => <span style={style} key={index}>{t}</span>)
+
   return (
     <li>
       <div style={{display: 'flex'}}>
@@ -60,7 +68,7 @@ function TodoItem({todo}: Props) {
             onChange={handleInputChange}
             initialValue={text} /> :
           <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}} onClick={handleLabelClick}>
-            {completedAt != null ? <s>{text}</s> : text}
+            {completedAt != null ? <s>{spans}</s> : spans}
           </label>
         }
         
