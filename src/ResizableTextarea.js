@@ -21,10 +21,11 @@ type Props = {
   value: string;
   onChange: (value: string) => void;
   onBlur?: () => void,
+  onKeyUp?: (e: any) => void,
+  onKeyDown?: (e: any) => void,
 }
 
 function ResizableTextarea(props: Props) {
-  console.log(props)
   const rows = Math.max(props.value.split('\n').length, MIN_ROWS);
   const textareaRef = useRef();
 	useEffect(() => {
@@ -41,6 +42,8 @@ function ResizableTextarea(props: Props) {
 				value={props.value}
 				onChange={event => { props.onChange(event.target.value); }}
         onBlur={() => { props.onBlur && props.onBlur() }}
+        onKeyUp={(e) => { props.onKeyUp && props.onKeyUp(e) }}
+        onKeyDown={(e) => { props.onKeyDown && props.onKeyDown(e) }}
 			/>
 		);
 }

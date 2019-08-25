@@ -30,8 +30,15 @@ function TodoListView() {
   }
 
   function handleKeyDown(e) {
-    if (e.keyCode === ENTER_KEY_CODE) {
-      handleAddClick();
+    if (e.keyCode === ENTER_KEY_CODE && e.metaKey) {
+      if (e.shiftKey) {
+        if (text !== '') {
+          addTodo(text, true);
+          setText('');
+        }
+      } else {
+        handleAddClick();
+      }
     }
   }
 
@@ -73,7 +80,7 @@ function TodoListView() {
         alignItems: 'center', 
         padding: '1em'
       }}>
-        <ResizableTextarea value={text} onChange={value => setText(value)}/>
+        <ResizableTextarea value={text} onChange={value => setText(value)} onKeyDown={handleKeyDown}/>
         <button
           onClick={handleAddClick}
           style={{margin: '5px'}}

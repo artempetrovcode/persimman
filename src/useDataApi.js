@@ -219,7 +219,7 @@ function daysAgo(d) {
   function updateTodoStatus(todo: Todo, isCompleted: boolean) {
     updateTodo({
       ...todo,
-      completedAt: isCompleted ? String(Date.now()) : '',
+      completedAt: isCompleted ? Date.now() : null,
     })
   }
 

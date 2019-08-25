@@ -10,10 +10,6 @@ function TodoInput(props) {
 		setValue(e.target.value);
 	}
 
-	function handleKeyUp() {
-		
-	}
-
 	function handleBlur() {
 		if (value === props.initialValue) {
 			props.onCancel();
@@ -28,7 +24,6 @@ function TodoInput(props) {
 		autofocus={true}
 		value={value} 
 		onBlur={handleBlur}
-		onKeyUp={handleKeyUp}
 		onChange={value => setValue(value)}/>
 } 
 
