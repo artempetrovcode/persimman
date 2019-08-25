@@ -5,7 +5,9 @@ import * as React from 'react';
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import TodoInput from './TodoInput';
+import TodoDateTimeInput  from './TodoDateTimeInput';
 import splitText from './splitText';
+import {getISODateString, getISOTimeString} from '../lib/timeUtils';
 
 const {useContext, useState} = React;
 
@@ -15,7 +17,8 @@ type Props = {
 
 function TodoItem({todo}: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const {deleteTodo, updateTodoStatus, updateTodo, updateTodoText} = useContext(DispatchContext);
+  const [isDateEditing, setIsDateEditing] = useState(false);
+  const {deleteTodo, updateTodoStatus, updateTodo, updateTodoText, updateTodoCompletedAt} = useContext(DispatchContext);
   const {id, text, completedAt, isDeleted, createdAt, updatedAt} = todo;
 
   function handleCheckboxChange(e) {
@@ -45,6 +48,17 @@ function TodoItem({todo}: Props) {
     setIsEditing(false);
   }
 
+  function handleDateClick() {
+    setIsDateEditing(true);
+  }
+  function handleDateTimeCancel() {
+    setIsDateEditing(false);
+  }
+  function handleDateTimeChange(newCompletedAt) {
+    setIsDateEditing(false);
+    updateTodoCompletedAt(todo, newCompletedAt);
+  }
+
   const style = {
     fontWeight: 'bold', 
     textDecoration: 'underline',
@@ -66,9 +80,23 @@ function TodoItem({todo}: Props) {
             onCancel={handleInputCancel}
             onDelete={handleInputDelete}
             onChange={handleInputChange}
-            initialValue={text} /> :
-          <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}} onClick={handleLabelClick}>
-            {completedAt != null ? <s>{spans}</s> : spans}
+            initialValue={text} />  
+          :
+          <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>
+            {completedAt == null ? 
+              <span onClick={handleLabelClick}>{spans}</span> :
+              <>
+                <s onClick={handleLabelClick}>{spans}</s>
+                {isDateEditing ? 
+                  <TodoDateTimeInput 
+                    onChange={handleDateTimeChange}
+                    onCancel={handleDateTimeCancel}
+                    timestamp={completedAt}
+                  />: 
+                  <span onClick={handleDateClick}> [{getISODateString(new Date(completedAt))} {getISOTimeString(new Date(completedAt))}]</span>
+                }
+              </>
+            }
           </label>
         }
         

@@ -119,6 +119,26 @@ export function findClosestGoal(goalsByDate, date, log = false) {
   return prevGoal;
 }
 
+function withLeadingZero(str: string) {
+  if (str.length === 1) {
+    return '0' + str;
+  }
+  return str;
+}
+
+export const getISOTimeString = (d) => {
+  const [time, amOrPm] = d.toLocaleTimeString().split(' ');
+  const pmShift = amOrPm === 'PM' ? 12 : 0;
+  const [hours, minutes, seconds] = time.split(':');
+
+  return `${withLeadingZero(String(Number(hours) + pmShift))}:${minutes}:${seconds}`;
+}
+
+export const getISODateString = (d) => {
+  const [month, date, year] = d.toLocaleDateString().split('/');
+  return `${year}-${withLeadingZero(month)}-${withLeadingZero(date)}`;
+}
+
 export const getDayLetter = d => 'SMTWTFS'[d.getDay()];
 
 export const nextDayOffset = 1000 * 60 * 60 * 24;

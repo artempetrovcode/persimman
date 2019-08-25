@@ -22,6 +22,7 @@ function App() {
     updateTodoStatus,
     deleteTodo,
     updateTodoText,
+    updateTodoCompletedAt,
   } = useDataApi();
 
   useEffect(fetchData, []);
@@ -35,6 +36,7 @@ function App() {
       updateTodoStatus,
       deleteTodo,
       updateTodoText,
+      updateTodoCompletedAt,
     }}>
       <StateContext.Provider value={state}>
         <div style={{margin: '1em'}}>

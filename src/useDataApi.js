@@ -209,6 +209,13 @@ function daysAgo(d) {
     })
   }
 
+  function updateTodoCompletedAt(todo: Todo, completedAt: string) {
+    updateTodo({
+      ...todo,
+      completedAt,
+    })
+  }
+
   function updateTodoStatus(todo: Todo, isCompleted: boolean) {
     updateTodo({
       ...todo,
@@ -234,6 +241,7 @@ function daysAgo(d) {
     updateTodoStatus,
     updateTodoText,
     deleteTodo,
+    updateTodoCompletedAt,
   };
 };
 
