@@ -1,5 +1,54 @@
 import type {Todo} from './Todo';
 
+const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
+const SHEET_NAME = 'todo';
+const COLUMN_NAMES_IN_ORDER = [
+  'id',          // 0
+  'text',        // 1
+  'completedAt', // 2
+  'isDeleted',   // 3
+  'createdAt',   // 4
+  'updatedAt',   // 5
+];
+
+function rowValueToIdAndObject(value) {
+  const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
+  if (typeof id === 'string' &&
+    typeof text === 'string' &&
+    typeof completedAt === 'string' &&
+    typeof isDeleted === 'string' &&
+    typeof createdAt === 'string' &&
+    typeof updatedAt === 'string'
+  ) {
+    // todo validate completedAt and other dates
+    // todo throw on invalid rows
+
+    const obj = ({
+      id,
+      text,
+      completedAt: completedAt === '' ? null : Number(completedAt), 
+      isDeleted: isDeleted === '1',
+      createdAt: Number(createdAt),
+      updatedAt: Number(updatedAt),
+    }: Todo);
+
+    return [id, obj];
+  } 
+
+  return [null, null];
+}
+
+function objectToRowValue(todo) {
+  return [
+    todo.id,
+    todo.text,
+    todo.completedAt,
+    JSON.stringify(todo.isDeleted ? 1 : 0),
+    todo.createdAt,
+    todo.updatedAt,
+  ];
+}
+
 type GAPI = $ReadOnly<{|
   client: $ReadOnly<{|
     sheets: $ReadOnly<{|
@@ -87,17 +136,7 @@ function getGAPI(): Promise<GAPI> {
   });
 }
 
-const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
-const SHEET_NAME = 'todo';
 const FIRST_COLUMN_INDEX = 1; // 1-based
-const COLUMN_NAMES_IN_ORDER = [
-  'id',          // 0
-  'text',        // 1
-  'completedAt', // 2
-  'isDeleted',   // 3
-  'createdAt',   // 4
-  'updatedAt',   // 5
-]
 const NUMBER_OF_COLUMNS = COLUMN_NAMES_IN_ORDER.length + 1;
 const FIRST_ROW_INDEX = 2; // 1-based
 const COLUMN_INDEX_TO_CODE = {
@@ -177,7 +216,7 @@ const RANGE = getRange({
   firstRowIndex: FIRST_ROW_INDEX,
   lastColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX + NUMBER_OF_COLUMNS - 1],
   lastRowIndex: null,
-}); //'Class Data!A2:G';
+}); 
 
 
 
@@ -201,33 +240,17 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
           return undefined;
         }
 
-        const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
-        if (typeof id === 'string' &&
-          typeof text === 'string' &&
-          typeof completedAt === 'string' &&
-          typeof isDeleted === 'string' &&
-          typeof createdAt === 'string' &&
-          typeof updatedAt === 'string'
-        ) {
-          // todo validate completedAt and other dates
-          // todo throw on invalid rows
+        const [id, obj] = rowValueToIdAndObject(value);
+        if (id != null) {
           idToRowIndexCache.set(id, index + 2);
-
-          return ({
-            id,
-            text,
-            completedAt: completedAt === '' ? null : Number(completedAt), 
-            isDeleted: isDeleted === '1',
-            createdAt: Number(createdAt),
-            updatedAt: Number(updatedAt),
-          }: Todo);
+          return obj;
         }
       }).filter(Boolean);
     });
   });
 }
 
-export function append(todo: Todo): Promise<Todo> {
+export function append(obj: Todo): Promise<Todo> {
 
   return getGAPI().then((gapi: GAPI) => {
     return gapi.client.sheets.spreadsheets.values.append(
@@ -240,15 +263,8 @@ export function append(todo: Todo): Promise<Todo> {
       {
         range: RANGE,
         majorDimension: 'ROWS',
-          values: [
-            [
-              todo.id,
-              todo.text,
-              todo.completedAt,
-              JSON.stringify(todo.isDeleted ? 1 : 0),
-              todo.createdAt,
-              todo.updatedAt,
-          ]
+        values: [
+          objectToRowValue(obj),
         ],
       }
     ).then(function(response) {      
@@ -262,20 +278,20 @@ export function append(todo: Todo): Promise<Todo> {
       }
 
       const rowIndex = parseRange(response.result.updates.updatedRange).firstRowIndex;
-      idToRowIndexCache.set(todo.id, rowIndex);
+      idToRowIndexCache.set(obj.id, rowIndex);
 
       return {
-        ...todo,
+        ...obj,
       }
     });
   });
 }
 
-export function update(todo: Todo): Promise<Todo> {
+export function update(obj: Todo): Promise<Todo> {
 
-  const rowIndex = idToRowIndexCache.get(todo.id);
+  const rowIndex = idToRowIndexCache.get(obj.id);
   if (rowIndex == null) {
-    throw new Error(`id ${todo.id} is not in cache`);
+    throw new Error(`id ${obj.id} is not in cache`);
   }
   const range = getRange({
     sheetName: SHEET_NAME,
@@ -296,14 +312,7 @@ export function update(todo: Todo): Promise<Todo> {
         range,
         majorDimension: 'ROWS',
           values: [
-            [
-              todo.id,
-              todo.text,
-              todo.completedAt,
-              todo.isDeleted ? '1' : '0',
-              todo.createdAt,
-              todo.updatedAt,
-          ]
+            objectToRowValue(obj),
         ],
       }
     ).then(function(response) {      
@@ -312,7 +321,7 @@ export function update(todo: Todo): Promise<Todo> {
         response.result.updatedRows !== 1 ||
         typeof response.result.updatedRange !== 'string'
       ) {
-        throw new Error('Cannot update todo');
+        throw new Error('Cannot update obj');
       }
 
       const updatedRowIndex = parseRange(response.result.updatedRange).firstRowIndex;
@@ -321,7 +330,7 @@ export function update(todo: Todo): Promise<Todo> {
       }
 
       return {
-        ...todo,
+        ...obj,
       }
     });
   });
