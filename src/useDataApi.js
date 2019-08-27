@@ -1,7 +1,7 @@
 // @flow
 import type {Todo} from './Todo';
 import * as React from 'react';
-import {fetch, append, update} from './sheetsApi';
+import {fetch, append, update} from './todoSheetApi';
 import uuidv4 from 'uuid/v4';
 const {useReducer, useState, useEffect} = React;
 

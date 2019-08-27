@@ -1,16 +1,5 @@
 import type {Todo} from './Todo';
 
-const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
-const SHEET_NAME = 'todo';
-const COLUMN_NAMES_IN_ORDER = [
-  'id',          // 0
-  'text',        // 1
-  'completedAt', // 2
-  'isDeleted',   // 3
-  'createdAt',   // 4
-  'updatedAt',   // 5
-];
-
 function rowValueToIdAndObject(value) {
   const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
   if (typeof id === 'string' &&
@@ -137,7 +126,6 @@ function getGAPI(): Promise<GAPI> {
 }
 
 const FIRST_COLUMN_INDEX = 1; // 1-based
-const NUMBER_OF_COLUMNS = COLUMN_NAMES_IN_ORDER.length + 1;
 const FIRST_ROW_INDEX = 2; // 1-based
 const COLUMN_INDEX_TO_CODE = {
   1: 'A',
@@ -210,22 +198,22 @@ function parseRange(range: string): RangeObject {
   }
 }
 
-const RANGE = getRange({
-  sheetName: SHEET_NAME,
-  firstColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX],
-  firstRowIndex: FIRST_ROW_INDEX,
-  lastColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX + NUMBER_OF_COLUMNS - 1],
-  lastRowIndex: null,
-}); 
+function createFullRange(sheetName, numberOfColumns) {
+  return getRange({
+    sheetName: sheetName,
+    firstColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX],
+    firstRowIndex: FIRST_ROW_INDEX,
+    lastColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX + numberOfColumns],
+    lastRowIndex: null,
+  }); 
+}
 
-
-
-export function fetch(): Promise<$ReadOnlyArray<Todo>> {
+export function fetch(spreadsheetId: string, sheetName: string, numberOfColumns: number): Promise<$ReadOnlyArray<Todo>> {
 
   return getGAPI().then(gapi => {
     return gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: RANGE,
+      spreadsheetId,
+      range: createFullRange(sheetName, numberOfColumns),
       includeGridData: true,
     }).then(function(response) {
 
@@ -250,18 +238,18 @@ export function fetch(): Promise<$ReadOnlyArray<Todo>> {
   });
 }
 
-export function append(obj: Todo): Promise<Todo> {
+export function append<T>(spreadsheetId: string, sheetName: string, numberOfColumns: number, obj: T): Promise<T> {
 
   return getGAPI().then((gapi: GAPI) => {
     return gapi.client.sheets.spreadsheets.values.append(
       {
-        spreadsheetId: SPREADSHEET_ID,
-        range: RANGE,
+        spreadsheetId,
+        range: createFullRange(sheetName, numberOfColumns),
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
       },
       {
-        range: RANGE,
+        range: createFullRange(sheetName, numberOfColumns),
         majorDimension: 'ROWS',
         values: [
           objectToRowValue(obj),
@@ -287,24 +275,24 @@ export function append(obj: Todo): Promise<Todo> {
   });
 }
 
-export function update(obj: Todo): Promise<Todo> {
+export function update<T>(spreadsheetId: string, sheetName: string, numberOfColumns: number, obj: T): Promise<T> {
 
   const rowIndex = idToRowIndexCache.get(obj.id);
   if (rowIndex == null) {
     throw new Error(`id ${obj.id} is not in cache`);
   }
   const range = getRange({
-    sheetName: SHEET_NAME,
+    sheetName,
     firstColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX],
     firstRowIndex: rowIndex,
-    lastColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX + NUMBER_OF_COLUMNS - 1],
+    lastColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX + numberOfColumns],
     lastRowIndex: rowIndex,
   });
 
   return getGAPI().then((gapi: GAPI) => {
     return gapi.client.sheets.spreadsheets.values.update(
       {
-        spreadsheetId: SPREADSHEET_ID,
+        spreadsheetId,
         range,
         valueInputOption: 'RAW',
       },
