@@ -1,4 +1,6 @@
 import * as api from './sheetsApi';
+import type {Todo} from './Todo';
+import type {RowValue} from './sheetsApi';
 
 const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
 const SHEET_NAME = 'todo';
@@ -11,13 +13,48 @@ const COLUMN_NAMES_IN_ORDER = [
   'updatedAt',   // 5
 ];
 
-export function fetch(): Promise<$ReadOnlyArray<Todo>> {
-  return api.fetch(SPREADSHEET_ID, SHEET_NAME, COLUMN_NAMES_IN_ORDER.length);
-};
-export function update(todo: Todo): Promise<Todo> {
-  return api.update(SPREADSHEET_ID, SHEET_NAME, COLUMN_NAMES_IN_ORDER.length, todo);
+function rowValueToIdAndObject(value: RowValue): ?Todo {
+  const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
+  if (typeof id === 'string' &&
+    typeof text === 'string' &&
+    typeof completedAt === 'string' &&
+    typeof isDeleted === 'string' &&
+    typeof createdAt === 'string' &&
+    typeof updatedAt === 'string'
+  ) {
+    // todo validate completedAt and other dates
+    // todo throw on invalid rows
+
+    return ({
+      id,
+      text,
+      completedAt: completedAt === '' ? null : Number(completedAt), 
+      isDeleted: isDeleted === '1',
+      createdAt: Number(createdAt),
+      updatedAt: Number(updatedAt),
+    }: Todo);
+  } 
 }
 
+function objectToRowValue(todo: Todo): RowValue {
+  return [
+    todo.id,
+    todo.text,
+    todo.completedAt,
+    JSON.stringify(todo.isDeleted ? 1 : 0),
+    todo.createdAt,
+    todo.updatedAt,
+  ];
+}
+
+export function fetch(): Promise<$ReadOnlyArray<Todo>> {
+  return api.fetch(SPREADSHEET_ID, SHEET_NAME, COLUMN_NAMES_IN_ORDER.length, rowValueToIdAndObject);
+};
+
+export function update(todo: Todo): Promise<Todo> {
+  return api.update(SPREADSHEET_ID, SHEET_NAME, COLUMN_NAMES_IN_ORDER.length, objectToRowValue, todo);
+};
+
 export function append(todo: Todo): Promise<Todo> {
-  return api.append(SPREADSHEET_ID, SHEET_NAME, COLUMN_NAMES_IN_ORDER.length, todo);
+  return api.append(SPREADSHEET_ID, SHEET_NAME, COLUMN_NAMES_IN_ORDER.length, objectToRowValue, todo);
 };

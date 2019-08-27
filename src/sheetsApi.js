@@ -1,42 +1,5 @@
-import type {Todo} from './Todo';
-
-function rowValueToIdAndObject(value) {
-  const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
-  if (typeof id === 'string' &&
-    typeof text === 'string' &&
-    typeof completedAt === 'string' &&
-    typeof isDeleted === 'string' &&
-    typeof createdAt === 'string' &&
-    typeof updatedAt === 'string'
-  ) {
-    // todo validate completedAt and other dates
-    // todo throw on invalid rows
-
-    const obj = ({
-      id,
-      text,
-      completedAt: completedAt === '' ? null : Number(completedAt), 
-      isDeleted: isDeleted === '1',
-      createdAt: Number(createdAt),
-      updatedAt: Number(updatedAt),
-    }: Todo);
-
-    return [id, obj];
-  } 
-
-  return [null, null];
-}
-
-function objectToRowValue(todo) {
-  return [
-    todo.id,
-    todo.text,
-    todo.completedAt,
-    JSON.stringify(todo.isDeleted ? 1 : 0),
-    todo.createdAt,
-    todo.updatedAt,
-  ];
-}
+export type RowValue = $ReadOnlyArray<string>;
+type Trackable = { id: string };
 
 type GAPI = $ReadOnly<{|
   client: $ReadOnly<{|
@@ -53,7 +16,7 @@ type GAPI = $ReadOnly<{|
             valueRangeBody: $ReadOnly<{|
               range: string,
               majorDimension: string,
-              values: $ReadOnlyArray<$ReadOnlyArray<string>>,
+              values: $ReadOnlyArray<RowValue>,
             |}>) => Promise<$ReadOnly<{|
             result: $ReadOnly<{|
               spreadsheetId: string,
@@ -65,7 +28,7 @@ type GAPI = $ReadOnly<{|
                 updatedRange: string,
                 updatedRows: number,
               |}>,
-              values: $ReadOnlyArray<$ReadOnlyArray<string>>,
+              values: $ReadOnlyArray<RowValue>,
             |}>
           |}>>,
           get: (params: $ReadOnly<{|
@@ -74,7 +37,7 @@ type GAPI = $ReadOnly<{|
             includeGridData: boolean,
           |}>) => Promise<$ReadOnly<{|
             result: $ReadOnly<{|
-              values: $ReadOnlyArray<$ReadOnlyArray<string>>,
+              values: $ReadOnlyArray<RowValue>,
             |}>
           |}>>,
           update: (
@@ -86,7 +49,7 @@ type GAPI = $ReadOnly<{|
             valueRangeBody: $ReadOnly<{|
               range: string,
               majorDimension: string,
-              values: $ReadOnlyArray<$ReadOnlyArray<string>>,
+              values: $ReadOnlyArray<RowValue>,
             |}>) => Promise<$ReadOnly<{|
             result: $ReadOnly<{|
               spreadsheetId: string,
@@ -198,7 +161,7 @@ function parseRange(range: string): RangeObject {
   }
 }
 
-function createFullRange(sheetName, numberOfColumns) {
+function createFullRange(sheetName: string, numberOfColumns: number): string {
   return getRange({
     sheetName: sheetName,
     firstColumnCode: COLUMN_INDEX_TO_CODE[FIRST_COLUMN_INDEX],
@@ -208,7 +171,12 @@ function createFullRange(sheetName, numberOfColumns) {
   }); 
 }
 
-export function fetch(spreadsheetId: string, sheetName: string, numberOfColumns: number): Promise<$ReadOnlyArray<Todo>> {
+export function fetch<T: Trackable>(
+  spreadsheetId: string, 
+  sheetName: string, 
+  numberOfColumns: number, 
+  rowValueToIdAndObject: (value: RowValue) => ?T,
+): Promise<$ReadOnlyArray<T>> {
 
   return getGAPI().then(gapi => {
     return gapi.client.sheets.spreadsheets.values.get({
@@ -228,9 +196,9 @@ export function fetch(spreadsheetId: string, sheetName: string, numberOfColumns:
           return undefined;
         }
 
-        const [id, obj] = rowValueToIdAndObject(value);
-        if (id != null) {
-          idToRowIndexCache.set(id, index + 2);
+        const obj = rowValueToIdAndObject(value);
+        if (obj != null) {
+          idToRowIndexCache.set(obj.id, index + 2);
           return obj;
         }
       }).filter(Boolean);
@@ -238,7 +206,13 @@ export function fetch(spreadsheetId: string, sheetName: string, numberOfColumns:
   });
 }
 
-export function append<T>(spreadsheetId: string, sheetName: string, numberOfColumns: number, obj: T): Promise<T> {
+export function append<T: Trackable>(
+  spreadsheetId: string, 
+  sheetName: string, 
+  numberOfColumns: number, 
+  objectToRowValue: (T) => RowValue, 
+  obj: T
+): Promise<T> {
 
   return getGAPI().then((gapi: GAPI) => {
     return gapi.client.sheets.spreadsheets.values.append(
@@ -262,7 +236,7 @@ export function append<T>(spreadsheetId: string, sheetName: string, numberOfColu
         response.result.updates.updatedRows !== 1 ||
         typeof response.result.updates.updatedRange !== 'string'
       ) {
-        throw new Error('Cannot append todo');
+        throw new Error('Cannot append object');
       }
 
       const rowIndex = parseRange(response.result.updates.updatedRange).firstRowIndex;
@@ -275,7 +249,13 @@ export function append<T>(spreadsheetId: string, sheetName: string, numberOfColu
   });
 }
 
-export function update<T>(spreadsheetId: string, sheetName: string, numberOfColumns: number, obj: T): Promise<T> {
+export function update<T>(
+  spreadsheetId: string, 
+  sheetName: string, 
+  numberOfColumns: number, 
+  objectToRowValue: (T) => RowValue,
+  obj: T
+): Promise<T> {
 
   const rowIndex = idToRowIndexCache.get(obj.id);
   if (rowIndex == null) {
@@ -309,7 +289,7 @@ export function update<T>(spreadsheetId: string, sheetName: string, numberOfColu
         response.result.updatedRows !== 1 ||
         typeof response.result.updatedRange !== 'string'
       ) {
-        throw new Error('Cannot update obj');
+        throw new Error('Cannot update object');
       }
 
       const updatedRowIndex = parseRange(response.result.updatedRange).firstRowIndex;
