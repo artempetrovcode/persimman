@@ -22,9 +22,6 @@ function rowValueToIdAndObject(value: RowValue): ?Todo {
     typeof createdAt === 'string' &&
     typeof updatedAt === 'string'
   ) {
-    // todo validate completedAt and other dates
-    // todo throw on invalid rows
-
     return ({
       id,
       text,
@@ -33,7 +30,9 @@ function rowValueToIdAndObject(value: RowValue): ?Todo {
       createdAt: Number(createdAt),
       updatedAt: Number(updatedAt),
     }: Todo);
-  } 
+  } else {
+    console.warn(`Cannot parse row "${value}"`);
+  }
 }
 
 function objectToRowValue(todo: Todo): RowValue {
