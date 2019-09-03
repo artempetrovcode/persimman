@@ -4,6 +4,7 @@ import * as React from 'react';
 import StateContext from '../StateContext';
 import BarWeek from './BarWeek';
 import Bar from './Bar';
+import QuickAdd from './QuickAdd';
 import {getDateForThisZone, getDayTimestampForThisZone2} from '../lib/timeUtils';
 
 const {useContext, useState} = React;
@@ -56,10 +57,10 @@ function Stats(props: Props) {
   return (
     <>
       <div>
-        {goalText}
-        <button onClick={() => setIsDetailed(prev => !prev)}>
-          Toggle Details
-        </button>
+        <span onClick={() => setIsDetailed(prev => !prev)} style={{textDecoration:'underline', fontWeight: 'bold'}}>
+          {goalText}
+        </span>
+        <QuickAdd goal={props.goal} />
       </div>
       <div style={{padding: '10px'}}>
       { goalText.match('@goal @flexibility') || goalText.match('@goal @gym') ? 

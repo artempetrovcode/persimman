@@ -53,13 +53,10 @@ function QuickAdd({goal}: Props) {
   }
 
   return (
-    <div>
-      Quick Add:  {goal}
-      <select value={selected} onChange={handleChange}>
-        <option value={SELECT_GOAL} key={goal}>{goal}</option>
-        {options.map(([text, freq]) => <option value={goal + ' ' + text} key={text}>{text} - {freq}</option>)}
-      </select>
-    </div> 
+    <select value={selected} onChange={handleChange}>
+      <option value={SELECT_GOAL} key={goal}>Quick Add</option>
+      {options.map(([text, freq]) => <option value={goal + ' ' + text} key={text}>{text} - {freq}</option>)}
+    </select>
   );
 }
 

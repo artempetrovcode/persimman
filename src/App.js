@@ -27,7 +27,7 @@ function Overlay({isVisible}) {
 }
 
 function App() {
-  const [view, setView] = useState<View>('TODO_LIST');
+  const [view, setView] = useState<View>('GOALS');
   const {
     state,
     addTodo,
@@ -54,9 +54,9 @@ function App() {
     }}>
       <StateContext.Provider value={state}>
         <div style={{margin: '1em'}}>
-          <button onClick={() => setView('TODO_LIST')}>Show Todos</button>
-          <button onClick={() => setView('GOALS')}>Show Goals</button>
-          <button onClick={() => setView('CALENDAR')}>Show Calendar</button>
+          <button onClick={() => setView('TODO_LIST')}>Todos</button>
+          <button onClick={() => setView('GOALS')}>Goals</button>
+          <button onClick={() => setView('CALENDAR')}>Calendar</button>
           <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
         </div>
         {

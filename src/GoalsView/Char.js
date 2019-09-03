@@ -2,15 +2,17 @@ import React from 'react';
 
 function CharInternal({char, bg, borderStyle, isFirst}) {
     const bStyle = borderStyle || 'transparent';
-    const s = '16px';
+    const largeSide = '16px';
+    const smallSide = '8px';
+
     const style = {
       textAlign: 'center', 
       verticalAlign: 'top', 
-      lineHeight: s, 
+      lineHeight: largeSide, 
       fontSize: '12px', 
       display: 'inline-block', 
-      width: s, 
-      height: s, 
+      width: largeSide, 
+      height: smallSide, 
       background: bg || 'white', 
       boxSizing: 'border-box',
       borderLeft: `1px ${isFirst ? 'transparent' : 'solid'} black`,
