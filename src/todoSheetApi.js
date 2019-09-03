@@ -1,6 +1,6 @@
-import * as api from './sheetsApi';
+import * as api from './sheetsApiV1';
 import type {Todo} from './Todo';
-import type {RowValue} from './sheetsApi';
+import type {RowValue} from './sheetsApiV1';
 
 const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
 const SHEET_NAME = 'todo';

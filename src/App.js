@@ -12,6 +12,20 @@ const {useState, useEffect} = React;
 
 type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
 
+function Overlay({isVisible}) {
+  const style = {
+    position: 'fixed', 
+    background: 'gray', 
+    opacity: 0.5,
+    width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+  };
+
+  return isVisible ? <div style={style}></div> : null;
+}
+
 function App() {
   const [view, setView] = useState<View>('TODO_LIST');
   const {
@@ -52,17 +66,7 @@ function App() {
             <CalendarView /> :
             <TodoListView />
         }
-        {(state.isLoading || state.isUpdating || state.isAppending) ? 
-            <div style={{
-            position: 'fixed', 
-            background: 'gray', 
-            opacity: 0.5,
-            width: '100%',
-            height: '100%',
-            top: 0,
-            left: 0,
-          }}></div> : null
-        }
+        <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />
       </StateContext.Provider>
     </DispatchContext.Provider>
   )

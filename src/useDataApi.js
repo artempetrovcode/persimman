@@ -56,6 +56,7 @@ const useDataApi = () => {
     
     const todo: Todo = {
       id: uuidv4(),
+      
       text,
       completedAt: isCompleted ? now : null,  
       isDeleted: false,
