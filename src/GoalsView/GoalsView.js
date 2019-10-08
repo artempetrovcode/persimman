@@ -27,7 +27,6 @@ function GoalsView() {
     <>
       {Object.keys(uniqueGoals).map(goal => 
         <div key={goal} style={{borderBottom: '1px solid', marginTop: '10px'}}>
-          {/* <QuickAdd goal={goal} /> */}
           <Stats goal={goal} />
         </div>
       )}

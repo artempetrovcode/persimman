@@ -63,7 +63,7 @@ function Stats(props: Props) {
         <QuickAdd goal={props.goal} />
       </div>
       <div style={{padding: '10px'}}>
-      { goalText.match('@goal @flexibility') || goalText.match('@goal @gym') ? 
+      { goalText.match('@goal @flexibility') || goalText.match('@goal @gym') || goalText.match('@goal @posture') ? 
         <BarWeek goal={goal} goalsByDate={goalsByDate} groupedByDate={groupedByDate} />:
         <Bar goal={goal} goalsByDate={goalsByDate} groupedByDate={groupedByDate} />
       }      
