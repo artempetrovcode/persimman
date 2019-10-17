@@ -20,7 +20,9 @@ function GoalsView() {
 
   const uniqueGoals = {};
   for (const goal of goals) {
-    uniqueGoals[goal] = true;
+    if (goal != null) {
+      uniqueGoals[goal] = true;
+    }
   }
 
   return (

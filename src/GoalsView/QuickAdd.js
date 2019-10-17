@@ -17,8 +17,12 @@ type Props = {|
 
 function QuickAdd({goal}: Props) {
   const state = useContext(StateContext);
-  const {addTodo} = useContext(DispatchContext);
+  const commands = useContext(DispatchContext);
   const [selected, setSelected] = useState(SELECT_GOAL);
+  if (commands == null) {
+    return null;
+  }
+  const {addTodo} = commands;
   const optionsToFrequency: {[key: string]: number} = {};
 
   state.todos.forEach((todo: Todo) => {
@@ -47,7 +51,7 @@ function QuickAdd({goal}: Props) {
 
   function handleChange(e) {
     if (e.target.value !== SELECT_GOAL) {
-      addTodo(e.target.value, true);
+      addTodo(e.target.value, true, state.timeOffsetInMs);
       setSelected(SELECT_GOAL)
     }
   }

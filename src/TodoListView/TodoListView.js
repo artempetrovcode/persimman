@@ -11,12 +11,16 @@ const SEARCH_WAIT_MS = 10;
 
 function TodoListView() {
   const state = useContext(StateContext);
-  const {addTodo, updateTodo} = useContext(DispatchContext);
+  const commands = useContext(DispatchContext);
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState(query);
   const [showCompleted, setShowCompleted] = useState(false);
   const [text, setText] = useState('');
   const [lastTimeoutId, setLastTimeoutId] = useState(null);
+  if (commands == null) {
+    return null;
+  }
+  const {addTodo, updateTodo} = commands;
 
   function handleTextChange(e) {
     setText(e.target.value);
@@ -24,7 +28,7 @@ function TodoListView() {
 
   function handleAddClick() {
     if (text !== '') {
-      addTodo(text);
+      addTodo(text, false, state.timeOffsetInMs);
       setText('');
     }
   }
@@ -33,7 +37,7 @@ function TodoListView() {
     if (e.keyCode === ENTER_KEY_CODE && e.metaKey) {
       if (e.shiftKey) {
         if (text !== '') {
-          addTodo(text, true);
+          addTodo(text, true, state.timeOffsetInMs);
           setText('');
         }
       } else {
@@ -55,7 +59,6 @@ function TodoListView() {
     setQuery('')
   }
 
-  console.log(state);
   if (state.isLoading) {
     return <div>Loading...</div>;
   }

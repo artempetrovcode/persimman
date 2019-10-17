@@ -18,7 +18,11 @@ type Props = {
 function TodoItem({todo}: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDateEditing, setIsDateEditing] = useState(false);
-  const {deleteTodo, updateTodoStatus, updateTodo, updateTodoText, updateTodoCompletedAt} = useContext(DispatchContext);
+  const commands = useContext(DispatchContext);
+  if (commands == null) {
+    return null;
+  }
+  const {deleteTodo, updateTodoStatus, updateTodo, updateTodoText, updateTodoCompletedAt} = commands;
   const {id, text, completedAt, isDeleted, createdAt, updatedAt} = todo;
 
   function handleCheckboxChange(e) {

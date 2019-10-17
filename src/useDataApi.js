@@ -41,34 +41,26 @@ const useDataApi = () => {
   function daysAgo(d) {
     const now = Date.now();
     const ago = now - (1000 * 60 * 60 * 24 * d);
-    console.log(new Date(ago), ago);
     return ago;
   }
 
-  function createTodo(text: string, isCompleted: boolean): Todo {
-    let now;
-    if (window.location.search.match(/\?ago=\d+/)) {
-      const ago = Number(window.location.search.match(/\?ago=(\d+)/)[1]);
-      now = daysAgo(ago);
-    } else {
-      now = Date.now();
-    }
-    
+  function createTodo(text: string, isCompleted: boolean, timeOffsetInMs: number): Todo {
+    const now = Date.now() + timeOffsetInMs;
     const todo: Todo = {
       id: uuidv4(),
-      
       text,
       completedAt: isCompleted ? now : null,  
       isDeleted: false,
       createdAt: now,
       updatedAt: now,
     };
+    
     return todo;
   }
 
-  function addTodo(text: string, isCompleted: boolean) {
+  function addTodo(text: string, isCompleted: boolean, timeOffsetInMs: number) {
     dispatch({ type: 'APPEND_INIT' })
-    const todo = createTodo(text, isCompleted);
+    const todo = createTodo(text, isCompleted, timeOffsetInMs);
     append(todo).then(todo => {
       dispatch({
         type: 'APPEND_SUCCESS',
