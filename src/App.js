@@ -8,7 +8,7 @@ import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
 import useIsOnline from './useIsOnline';
 
-const {useState, useEffect} = React;
+const {useState, useEffect, useMemo} = React;
 
 type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
 
@@ -37,11 +37,23 @@ function App() {
     deleteTodo,
     updateTodoText,
     updateTodoCompletedAt,
+    setTimeOffsetInMs,
   } = useDataApi();
 
   useEffect(fetchData, []);
   const isOnline = useIsOnline();
-  
+  const timeOffsetInMsOptions = useMemo(() => {
+    return [
+      [0, 'Today'], 
+      [-1, '1 day ago'], 
+      [-2, '2 days ago']
+    ].map(([offsetInDays, label]) => {
+      return {
+        label,
+        value: 1000 * 60 * 60 * 24 * offsetInDays,
+      }
+    });
+  }, []);
 
   return (
     <DispatchContext.Provider value={{
@@ -58,6 +70,9 @@ function App() {
           <button onClick={() => setView('GOALS')}>Goals</button>
           <button onClick={() => setView('CALENDAR')}>Calendar</button>
           <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
+          <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
+            {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
+          </select>
         </div>
         {
           view === 'GOALS' ?

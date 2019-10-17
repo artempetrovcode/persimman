@@ -115,6 +115,13 @@ const useDataApi = () => {
     })
   }
 
+  function setTimeOffsetInMs(timeOffsetInMs: number) {
+    dispatch({
+        type: 'SET_TIME_OFFSET',
+        payload: timeOffsetInMs,
+      })
+  }
+
   return {
     state, 
     setUrl, 
@@ -126,6 +133,7 @@ const useDataApi = () => {
     updateTodoText,
     deleteTodo,
     updateTodoCompletedAt,
+    setTimeOffsetInMs,
   };
 };
 

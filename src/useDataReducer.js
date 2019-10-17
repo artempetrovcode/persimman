@@ -4,6 +4,7 @@ import * as React from 'react';
 const {useReducer} = React;
 
 export type State = $ReadOnly<{|
+    timeOffsetInMs: number,
     isAppending: boolean,
     isError: boolean,
     isLoading: boolean,
@@ -42,6 +43,11 @@ type UpdateSuccessAction = $ReadOnly<{|
     payload: Todo,
 |}>;
 
+type SetTimeOffsetAction = $ReadOnly<{|
+    type: 'SET_TIME_OFFSET',
+    payload: number,
+|}>;
+
 type Action = FetchInitAction 
   | FetchSuccessAction 
   | FetchFailureAction 
@@ -49,6 +55,7 @@ type Action = FetchInitAction
   | AppendSuccessAction
   | UpdateInitAction
   | UpdateSuccessAction
+  | SetTimeOffsetAction
 
 const reducer = (state: State, action: Action): State => {
   console.warn(action.type)
@@ -102,12 +109,18 @@ const reducer = (state: State, action: Action): State => {
           return todo;
         }).filter(todo => !todo.isDeleted)
       };
+    case 'SET_TIME_OFFSET':
+      return {
+        ...state,
+        timeOffsetInMs: action.payload,
+      };
     default:
       throw new Error();
   }
 };
 
 const initialState = {
+  timeOffsetInMs: 0,
   isAppending: false,
   isLoading: false,
   isError: false,
