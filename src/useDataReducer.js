@@ -119,7 +119,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const initialState = {
+export const initialState = {
   timeOffsetInMs: 0,
   isAppending: false,
   isLoading: false,

@@ -58,7 +58,7 @@ function TodoItem({todo}: Props) {
   function handleDateTimeCancel() {
     setIsDateEditing(false);
   }
-  function handleDateTimeChange(newCompletedAt) {
+  function handleDateTimeChange(newCompletedAt: number) {
     setIsDateEditing(false);
     updateTodoCompletedAt(todo, newCompletedAt);
   }

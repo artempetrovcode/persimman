@@ -61,10 +61,10 @@ const useDataApi = () => {
   function addTodo(text: string, isCompleted: boolean, timeOffsetInMs: number) {
     dispatch({ type: 'APPEND_INIT' })
     const todo = createTodo(text, isCompleted, timeOffsetInMs);
-    append(todo).then(todo => {
+    append([todo]).then(todos => {
       dispatch({
         type: 'APPEND_SUCCESS',
-        payload: todo,
+        payload: todos[0],
       })
     })
   }
@@ -86,7 +86,7 @@ const useDataApi = () => {
     })
   }
 
-  function updateTodoCompletedAt(todo: Todo, completedAt: string) {
+  function updateTodoCompletedAt(todo: Todo, completedAt: number) {
     updateTodo({
       ...todo,
       completedAt,

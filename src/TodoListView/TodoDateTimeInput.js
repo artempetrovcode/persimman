@@ -1,3 +1,4 @@
+// @flow
 import * as React from 'react';
 import ResizableTextarea from '../ResizableTextarea';
 import {getISODateString, getISOTimeString} from '../lib/timeUtils';
@@ -5,6 +6,9 @@ import {getISODateString, getISOTimeString} from '../lib/timeUtils';
 const {useState} = React;
 
 type Props = {
+	onCancel: () => void,
+	onChange: (value: number) => void,
+	timestamp: number,
 }
 
 function TodoDateTimeInput(props: Props) {

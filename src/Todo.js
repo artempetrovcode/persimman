@@ -1,3 +1,5 @@
+// @flow
+
 export type Todo = $ReadOnly<{|
   id: string,
   text: string,
