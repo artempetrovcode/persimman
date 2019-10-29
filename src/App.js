@@ -27,7 +27,7 @@ function Overlay({isVisible}) {
 }
 
 function App() {
-  const [view, setView] = useState<View>('GOALS');
+  const [view, setView] = useState<View>('TODO_LIST');
   const {
     state,
     addTodo,

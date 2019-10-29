@@ -1,4 +1,8 @@
-function splitText(text, wrap: (t: string, index: number) => any, wrapTag: (t: string, index: number) => any) {
+function splitText(
+  text,
+  wrap: (t: string, index: number) => any,
+  wrapTag: (t: string, index: number) => any
+): $ReadOnlyArray<any> {
     const spans = [];  
     const regex = RegExp('@[a-z]+','g');
     let array1;
@@ -19,7 +23,7 @@ function splitText(text, wrap: (t: string, index: number) => any, wrapTag: (t: s
       // tag
       lastTagEndIndex = array1.index + array1[0].length;
       if (lastTagEndIndex !== array1.index) {
-        spans.push(wrapTag(text.substring(array1.index, lastTagEndIndex), index++))    
+        spans.push(wrapTag(text.substring(array1.index, lastTagEndIndex), index++));    
       }
     }
 

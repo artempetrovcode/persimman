@@ -8,6 +8,7 @@ import TodoInput from './TodoInput';
 import TodoDateTimeInput  from './TodoDateTimeInput';
 import splitText from './splitText';
 import {getISODateString, getISOTimeString} from '../lib/timeUtils';
+import {decode, encode} from '../lib/encoding';
 
 const {useContext, useState} = React;
 
@@ -42,7 +43,7 @@ function TodoItem({todo}: Props) {
   }
   function handleInputChange(value) {
     setIsEditing(false);
-    updateTodoText(todo, value);
+    updateTodoText(todo, encode(value));
   }
   function handleInputDelete() {
     setIsEditing(false);
@@ -84,7 +85,7 @@ function TodoItem({todo}: Props) {
             onCancel={handleInputCancel}
             onDelete={handleInputDelete}
             onChange={handleInputChange}
-            initialValue={text} />  
+            initialValue={decode(text)} />  
           :
           <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>
             {completedAt == null ? 

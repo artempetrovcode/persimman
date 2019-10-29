@@ -4,6 +4,7 @@ import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import TodoItem from './TodoItem';
 import ResizableTextarea from '../ResizableTextarea';
+import {encode} from '../lib/encoding';
 
 const {useContext, useState} = React;
 const ENTER_KEY_CODE = 13;
@@ -20,7 +21,7 @@ function TodoListView() {
   if (commands == null) {
     return null;
   }
-  const {addTodo, updateTodo} = commands;
+  const {addTodo} = commands;
 
   function handleTextChange(e) {
     setText(e.target.value);
@@ -28,7 +29,7 @@ function TodoListView() {
 
   function handleAddClick() {
     if (text !== '') {
-      addTodo(text, false, state.timeOffsetInMs);
+      addTodo(encode(text), false, state.timeOffsetInMs);
       setText('');
     }
   }
