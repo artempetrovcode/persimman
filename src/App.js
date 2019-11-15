@@ -3,6 +3,7 @@ import * as React from 'react';
 import CalendarView from './CalendarView/CalendarView';
 import GoalsView from './GoalsView/GoalsView';
 import TodoListView from './TodoListView/TodoListView';
+import GantView from './GantView/GantView';
 import useDataApi from './useDataApi';
 import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
@@ -10,7 +11,7 @@ import useIsOnline from './useIsOnline';
 
 const {useState, useEffect, useMemo} = React;
 
-type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST';
+type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST' | 'GANT';
 
 function Overlay({isVisible}) {
   const style = {
@@ -27,7 +28,7 @@ function Overlay({isVisible}) {
 }
 
 function App() {
-  const [view, setView] = useState<View>('GOALS');
+  const [view, setView] = useState<View>('GANT');
   const {
     state,
     addTodo,
@@ -69,6 +70,7 @@ function App() {
           <button onClick={() => setView('TODO_LIST')}>Todos</button>
           <button onClick={() => setView('GOALS')}>Goals</button>
           <button onClick={() => setView('CALENDAR')}>Calendar</button>
+          <button onClick={() => setView('GANT')}>Gant</button>
           <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
           <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
             {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
@@ -79,6 +81,8 @@ function App() {
             <GoalsView /> :
             view === 'CALENDAR' ?
             <CalendarView /> :
+            view === 'GANT' ?
+            <GantView /> :
             <TodoListView />
         }
         <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />
