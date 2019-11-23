@@ -7,4 +7,5 @@ export type Todo = $ReadOnly<{|
   isDeleted: boolean,
   createdAt: number,
   updatedAt: number,
+  eta: ?number,
 |}>;

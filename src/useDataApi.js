@@ -53,6 +53,7 @@ const useDataApi = () => {
       isDeleted: false,
       createdAt: now,
       updatedAt: now,
+      eta: null,
     };
     
     return todo;

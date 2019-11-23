@@ -12,16 +12,18 @@ const COLUMN_NAMES_IN_ORDER = [
   'isDeleted',   // 3
   'createdAt',   // 4
   'updatedAt',   // 5
+  'eta',         // 6
 ];
 
 function rowValueToIdAndObject(value: RowValue): ?Todo {
-  const [id, text, completedAt, isDeleted, createdAt, updatedAt] = value;
+  const [id, text, completedAt, isDeleted, createdAt, updatedAt, eta] = value;
   if (typeof id === 'string' &&
     typeof text === 'string' &&
     typeof completedAt === 'string' &&
     typeof isDeleted === 'string' &&
     typeof createdAt === 'string' &&
     typeof updatedAt === 'string'
+    // eta can be undefined
   ) {
     return ({
       id,
@@ -30,6 +32,7 @@ function rowValueToIdAndObject(value: RowValue): ?Todo {
       isDeleted: isDeleted === '1',
       createdAt: Number(createdAt),
       updatedAt: Number(updatedAt),
+      eta: eta == null ? null : Number(eta),
     }: Todo);
   } else {
     console.warn(`Cannot parse row "${JSON.stringify(value)}"`);
@@ -44,6 +47,7 @@ function objectToRowValue(todo: Todo): RowValue {
     JSON.stringify(todo.isDeleted ? 1 : 0),
     String(todo.createdAt),
     String(todo.updatedAt),
+    String(todo.eta),
   ];
 }
 

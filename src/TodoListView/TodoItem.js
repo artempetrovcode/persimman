@@ -18,13 +18,14 @@ type Props = {
 
 function TodoItem({todo}: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isDateEditing, setIsDateEditing] = useState(false);
+  const [isEditingCompletedAt, setIsEditingCompletedAt] = useState(false);
+  const [isEditingProps, setIsEditingProps] = useState(false);
   const commands = useContext(DispatchContext);
   if (commands == null) {
     return null;
   }
   const {deleteTodo, updateTodoStatus, updateTodo, updateTodoText, updateTodoCompletedAt} = commands;
-  const {id, text, completedAt, isDeleted, createdAt, updatedAt} = todo;
+  const {id, text, completedAt, isDeleted, createdAt, updatedAt, eta} = todo;
 
   function handleCheckboxChange(e) {
     const isCompleted = e.target.checked;
@@ -54,13 +55,13 @@ function TodoItem({todo}: Props) {
   }
 
   function handleDateClick() {
-    setIsDateEditing(true);
+    setIsEditingCompletedAt(true);
   }
-  function handleDateTimeCancel() {
-    setIsDateEditing(false);
+  function handleCompletedAtCancel() {
+    setIsEditingCompletedAt(false);
   }
-  function handleDateTimeChange(newCompletedAt: number) {
-    setIsDateEditing(false);
+  function handleCompletedAtChange(newCompletedAt: number) {
+    setIsEditingCompletedAt(false);
     updateTodoCompletedAt(todo, newCompletedAt);
   }
 
@@ -80,32 +81,58 @@ function TodoItem({todo}: Props) {
           onChange={handleCheckboxChange}
         />
         {isEditing ?
+          <>
           <TodoInput 
             style={{flex:1}}
             onCancel={handleInputCancel}
             onDelete={handleInputDelete}
             onChange={handleInputChange}
-            initialValue={decode(text)} />  
+            initialValue={decode(text)} />
+            </>
           :
           <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>
             {completedAt == null ? 
               <span onClick={handleLabelClick}>{spans}</span> :
               <>
                 <s onClick={handleLabelClick}>{spans}</s>
-                {isDateEditing ? 
-                  <TodoDateTimeInput 
-                    onChange={handleDateTimeChange}
-                    onCancel={handleDateTimeCancel}
-                    timestamp={completedAt}
-                  />: 
-                  <span onClick={handleDateClick}> [{getISODateString(new Date(completedAt))} {getISOTimeString(new Date(completedAt))}]</span>
-                }
+                <span> [{getISODateString(new Date(completedAt))} {getISOTimeString(new Date(completedAt))}]</span>
               </>
             }
+            {eta == null ? null : `Eta: ${eta}`}
           </label>
         }
-        
-        <button onClick={handleDeleteClick}>x</button>
+        {
+          isEditingProps ?
+            <> 
+              <button onClick={() => setIsEditingProps(false)}>cancel</button>
+              {
+                completedAt == null ?
+                  <button>set completedAt[tbd]</button> :
+                  <>
+                    <span>CompletedAt:</span>
+                    <TodoDateTimeInput 
+                      onChange={handleCompletedAtChange}
+                      onCancel={handleCompletedAtCancel}
+                      timestamp={completedAt}
+                    />
+                  </> 
+              }
+              {
+                eta == null ?
+                  <button>set eta[tbd]</button> :
+                  <>
+                    <span>eta:</span>
+                    <TodoDateTimeInput 
+                      onChange={() => {}}
+                      onCancel={() => {}}
+                      timestamp={0}
+                    />
+                  </> 
+              }
+              <button onClick={handleDeleteClick}>delete</button>
+            </> :
+            <button onClick={() => setIsEditingProps(true)}>edit props</button>
+        }
       </div>
     </li>
   );
