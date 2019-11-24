@@ -5,6 +5,7 @@ import DispatchContext from '../DispatchContext';
 import TodoItem from './TodoItem';
 import ResizableTextarea from '../ResizableTextarea';
 import {encode} from '../lib/encoding';
+import { useHistory } from 'react-router-dom';
 
 type EtaFilterState = 'all' | 'with' | 'without';
 
@@ -12,15 +13,21 @@ const {useContext, useState} = React;
 const ENTER_KEY_CODE = 13;
 const SEARCH_WAIT_MS = 10;
 
-function TodoListView() {
+type Props = $ReadOnly<{|
+  query: ?string,
+  setQuery: (query: ?string) => void,
+|}>;
+
+function TodoListView({query, setQuery}: Props) {
   const state = useContext(StateContext);
   const commands = useContext(DispatchContext);
-  const [query, setQuery] = useState('');
-  const [search, setSearch] = useState(query);
+  const [search, setSearch] = useState(query == null ? '' : query);
   const [showCompleted, setShowCompleted] = useState(false);
   const [text, setText] = useState('');
   const [lastTimeoutId, setLastTimeoutId] = useState(null);
   const [etaFilter, setEtaFilter] = useState<EtaFilterState>('all');
+  const history = useHistory();
+
   if (commands == null) {
     return null;
   }
@@ -60,7 +67,7 @@ function TodoListView() {
   function handleClearClick() {
     lastTimeoutId && window.clearTimeout(lastTimeoutId);
     setSearch('');
-    setQuery('')
+    setQuery(null);
   }
 
   if (state.isLoading) {
@@ -89,7 +96,7 @@ function TodoListView() {
         Search
         <input 
           type="text"
-          value={search}
+          value={search == null ? '' : search}
           onChange={handleSeachChange}
         />
         <button onClick={handleClearClick}>Clear Search</button>
@@ -112,8 +119,7 @@ function TodoListView() {
       </div>
       <ul>
         {state.todos.slice().sort((a, b) => b.createdAt - a.createdAt).filter(todo => {
-          const isMatch = todo.text.match(query);
-          if (!isMatch) {
+          if (query != null && !todo.text.match(query)) {
             return false;
           }
           if (etaFilter === 'with' && todo.eta == null) {
