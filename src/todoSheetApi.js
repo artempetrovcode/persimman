@@ -47,7 +47,7 @@ function objectToRowValue(todo: Todo): RowValue {
     JSON.stringify(todo.isDeleted ? 1 : 0),
     String(todo.createdAt),
     String(todo.updatedAt),
-    String(todo.eta),
+    todo.eta == null ? '' : String(todo.eta),
   ];
 }
 

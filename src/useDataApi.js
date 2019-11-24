@@ -80,17 +80,24 @@ const useDataApi = () => {
     })
   }
 
-  function updateTodoText(todo: Todo, text: string) {
+  function updateTodoText(todo: Todo, text: string): void {
     updateTodo({
       ...todo,
       text,
     })
   }
 
-  function updateTodoCompletedAt(todo: Todo, completedAt: number) {
+  function updateTodoCompletedAt(todo: Todo, completedAt: number): void {
     updateTodo({
       ...todo,
       completedAt,
+    })
+  }
+
+  function updateTodoEta(todo: Todo, eta: number): void {
+    updateTodo({
+      ...todo,
+      eta,
     })
   }
 
@@ -126,6 +133,7 @@ const useDataApi = () => {
     updateTodoText,
     deleteTodo,
     updateTodoCompletedAt,
+    updateTodoEta,
     setTimeOffsetInMs,
   };
 };

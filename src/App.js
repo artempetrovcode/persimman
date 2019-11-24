@@ -38,9 +38,10 @@ function App() {
     deleteTodo,
     updateTodoText,
     updateTodoCompletedAt,
+    updateTodoEta,
     setTimeOffsetInMs,
   } = useDataApi();
-
+  console.log(state)
   useEffect(fetchData, []);
   const isOnline = useIsOnline();
   const timeOffsetInMsOptions = useMemo(() => {
@@ -64,6 +65,7 @@ function App() {
       deleteTodo,
       updateTodoText,
       updateTodoCompletedAt,
+      updateTodoEta,
     }}>
       <StateContext.Provider value={state}>
         <div style={{margin: '1em'}}>

@@ -142,3 +142,7 @@ export const getISODateString = (d) => {
 export const getDayLetter = d => 'SMTWTFS'[d.getDay()];
 
 export const nextDayOffset = 1000 * 60 * 60 * 24;
+
+export const formatDateTime = (timestamp: number): string => {
+  return getISODateString(new Date(timestamp)) + ' ' + getISOTimeString(new Date(timestamp));
+}

@@ -7,7 +7,7 @@ import DispatchContext from '../DispatchContext';
 import TodoInput from './TodoInput';
 import TodoDateTimeInput  from './TodoDateTimeInput';
 import splitText from './splitText';
-import {getISODateString, getISOTimeString} from '../lib/timeUtils';
+import {formatDateTime} from '../lib/timeUtils';
 import {decode, encode} from '../lib/encoding';
 
 const {useContext, useState} = React;
@@ -18,13 +18,19 @@ type Props = {
 
 function TodoItem({todo}: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditingCompletedAt, setIsEditingCompletedAt] = useState(false);
   const [isEditingProps, setIsEditingProps] = useState(false);
   const commands = useContext(DispatchContext);
   if (commands == null) {
     return null;
   }
-  const {deleteTodo, updateTodoStatus, updateTodo, updateTodoText, updateTodoCompletedAt} = commands;
+  const {
+    deleteTodo, 
+    updateTodoStatus, 
+    updateTodo, 
+    updateTodoText, 
+    updateTodoCompletedAt, 
+    updateTodoEta
+  } = commands;
   const {id, text, completedAt, isDeleted, createdAt, updatedAt, eta} = todo;
 
   function handleCheckboxChange(e) {
@@ -53,16 +59,11 @@ function TodoItem({todo}: Props) {
   function handleInputCancel() {
     setIsEditing(false);
   }
-
-  function handleDateClick() {
-    setIsEditingCompletedAt(true);
-  }
-  function handleCompletedAtCancel() {
-    setIsEditingCompletedAt(false);
-  }
   function handleCompletedAtChange(newCompletedAt: number) {
-    setIsEditingCompletedAt(false);
     updateTodoCompletedAt(todo, newCompletedAt);
+  }
+  function handleEtaChange(newEta: number) {
+    updateTodoEta(todo, newEta);
   }
 
   const style = {
@@ -88,17 +89,16 @@ function TodoItem({todo}: Props) {
             onDelete={handleInputDelete}
             onChange={handleInputChange}
             initialValue={decode(text)} />
-            </>
-          :
+          </> :
           <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>
             {completedAt == null ? 
               <span onClick={handleLabelClick}>{spans}</span> :
               <>
                 <s onClick={handleLabelClick}>{spans}</s>
-                <span> [{getISODateString(new Date(completedAt))} {getISOTimeString(new Date(completedAt))}]</span>
+                <span> [{formatDateTime(completedAt)}]</span>
               </>
             }
-            {eta == null ? null : `Eta: ${eta}`}
+            {eta == null ? null : <u>{`ETA: ${formatDateTime(eta)}`}</u>}
           </label>
         }
         {
@@ -109,23 +109,23 @@ function TodoItem({todo}: Props) {
                 completedAt == null ?
                   <button>set completedAt[tbd]</button> :
                   <>
-                    <span>CompletedAt:</span>
+                    <span>CompletedAt: </span>
                     <TodoDateTimeInput 
                       onChange={handleCompletedAtChange}
-                      onCancel={handleCompletedAtCancel}
+                      onCancel={() => {}}
                       timestamp={completedAt}
                     />
                   </> 
               }
               {
                 eta == null ?
-                  <button>set eta[tbd]</button> :
+                  <button onClick={() => handleEtaChange(Date.now())}>set eta[tbd]</button> :
                   <>
-                    <span>eta:</span>
+                    <span>ETA: </span>
                     <TodoDateTimeInput 
-                      onChange={() => {}}
+                      onChange={handleEtaChange}
                       onCancel={() => {}}
-                      timestamp={0}
+                      timestamp={eta}
                     />
                   </> 
               }
