@@ -4,6 +4,7 @@ import CalendarView from './CalendarView/CalendarView';
 import GoalsView from './GoalsView/GoalsView';
 import TodoListView from './TodoListView/TodoListView';
 import GantView from './GantView/GantView';
+import WallView from './WallView/WallView';
 import useDataApi from './useDataApi';
 import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
@@ -11,7 +12,7 @@ import useIsOnline from './useIsOnline';
 
 const {useState, useEffect, useMemo} = React;
 
-type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST' | 'GANT';
+type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST' | 'GANT' | 'WALL';
 
 function Overlay({isVisible}) {
   const style = {
@@ -72,6 +73,7 @@ function App() {
           <button onClick={() => setView('TODO_LIST')}>Todos</button>
           <button onClick={() => setView('GOALS')}>Goals</button>
           <button onClick={() => setView('CALENDAR')}>Calendar</button>
+          <button onClick={() => setView('WALL')}>Wall</button>
           <button onClick={() => setView('GANT')}>Gant</button>
           <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
           <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
@@ -85,6 +87,8 @@ function App() {
             <CalendarView /> :
             view === 'GANT' ?
             <GantView /> :
+            view === 'WALL' ?
+            <WallView /> :
             <TodoListView />
         }
         <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />

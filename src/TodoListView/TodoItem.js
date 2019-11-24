@@ -7,7 +7,7 @@ import DispatchContext from '../DispatchContext';
 import TodoInput from './TodoInput';
 import TodoDateTimeInput  from './TodoDateTimeInput';
 import splitText from './splitText';
-import {formatDateTime} from '../lib/timeUtils';
+import {formatDateTime, getTodayMidnightTimestamp} from '../lib/timeUtils';
 import {decode, encode} from '../lib/encoding';
 
 const {useContext, useState} = React;
@@ -104,7 +104,7 @@ function TodoItem({todo}: Props) {
         {
           isEditingProps ?
             <> 
-              <button onClick={() => setIsEditingProps(false)}>cancel</button>
+              <button onClick={() => setIsEditingProps(false)}>close</button>
               {
                 completedAt == null ?
                   <button>set completedAt[tbd]</button> :
@@ -119,7 +119,7 @@ function TodoItem({todo}: Props) {
               }
               {
                 eta == null ?
-                  <button onClick={() => handleEtaChange(Date.now())}>set eta[tbd]</button> :
+                  <button onClick={() => handleEtaChange(getTodayMidnightTimestamp())}>set eta</button> :
                   <>
                     <span>ETA: </span>
                     <TodoDateTimeInput 

@@ -6,6 +6,8 @@ import TodoItem from './TodoItem';
 import ResizableTextarea from '../ResizableTextarea';
 import {encode} from '../lib/encoding';
 
+type EtaFilterState = 'all' | 'with' | 'without';
+
 const {useContext, useState} = React;
 const ENTER_KEY_CODE = 13;
 const SEARCH_WAIT_MS = 10;
@@ -18,6 +20,7 @@ function TodoListView() {
   const [showCompleted, setShowCompleted] = useState(false);
   const [text, setText] = useState('');
   const [lastTimeoutId, setLastTimeoutId] = useState(null);
+  const [etaFilter, setEtaFilter] = useState<EtaFilterState>('all');
   if (commands == null) {
     return null;
   }
@@ -104,13 +107,27 @@ function TodoListView() {
             checked={showCompleted}
             onChange={e => setShowCompleted(e.target.checked)}
           />
-          Show Completed
+          - Show Completed
+        </label>
+        <label>
+          ETA Filter:
+          <select value={etaFilter} onChange={e => setEtaFilter(e.target.value)}>
+            <option value="all">all</option>
+            <option value="with">with</option>
+            <option vallue="without">without</option>
+          </select>
         </label>
       </div>
       <ul>
         {state.todos.slice().sort((a, b) => b.createdAt - a.createdAt).filter(todo => {
           const isMatch = todo.text.match(query);
           if (!isMatch) {
+            return false;
+          }
+          if (etaFilter === 'with' && todo.eta == null) {
+            return false;
+          }
+          if (etaFilter === 'without' && todo.eta != null) {
             return false;
           }
           if (showCompleted) {
