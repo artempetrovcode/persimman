@@ -6,10 +6,12 @@ import GoalsView from './GoalsView/GoalsView';
 import TodoListView from './TodoListView/TodoListView';
 import GantView from './GantView/GantView';
 import WallView from './WallView/WallView';
+import Search from './Search';
 import useDataApi from './useDataApi';
 import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
 import useIsOnline from './useIsOnline';
+ 
 import {
   BrowserRouter as Router,
   Switch,
@@ -104,7 +106,15 @@ function Content({state}: ContentProps) {
     }
   }
 
-  console.log({query, state})
+  const queryValue = query.get(URL_PARAM_QUERY);
+  const filteredTodos = queryValue == null ?
+    state.todos :
+    state.todos.filter(todo => {
+      if (queryValue != null && !todo.text.match(queryValue)) {
+        return false;
+      }
+      return true;
+    });
 
   return (
     <>
@@ -125,6 +135,7 @@ function Content({state}: ContentProps) {
       <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
         {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
       </select>
+      <Search setQuery={handleSetQuery} query={query.get(URL_PARAM_QUERY)} />
     </div>
     <Switch>
       <Route path="/goals">
@@ -140,7 +151,7 @@ function Content({state}: ContentProps) {
         <WallView />
       </Route>
       <Route path="/">
-        <TodoListView setQuery={handleSetQuery} query={query.get(URL_PARAM_QUERY)} />
+        <TodoListView todos={filteredTodos} />
       </Route>
     </Switch>
     <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />

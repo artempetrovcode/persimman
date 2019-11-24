@@ -1,11 +1,11 @@
 // @flow
+import type {Todo} from '../Todo';
 import * as React from 'react';
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import TodoItem from './TodoItem';
 import ResizableTextarea from '../ResizableTextarea';
 import {encode} from '../lib/encoding';
-import { useHistory } from 'react-router-dom';
 
 type EtaFilterState = 'all' | 'with' | 'without';
 
@@ -14,19 +14,16 @@ const ENTER_KEY_CODE = 13;
 const SEARCH_WAIT_MS = 10;
 
 type Props = $ReadOnly<{|
-  query: ?string,
-  setQuery: (query: ?string) => void,
+  todos: $ReadOnlyArray<Todo>,
 |}>;
 
-function TodoListView({query, setQuery}: Props) {
+function TodoListView({todos}: Props) {
   const state = useContext(StateContext);
   const commands = useContext(DispatchContext);
-  const [search, setSearch] = useState(query == null ? '' : query);
   const [showCompleted, setShowCompleted] = useState(false);
   const [text, setText] = useState('');
   const [lastTimeoutId, setLastTimeoutId] = useState(null);
   const [etaFilter, setEtaFilter] = useState<EtaFilterState>('all');
-  const history = useHistory();
 
   if (commands == null) {
     return null;
@@ -57,19 +54,6 @@ function TodoListView({query, setQuery}: Props) {
     }
   }
 
-  function handleSeachChange(e) {
-    const value = e.target.value;
-    lastTimeoutId && window.clearTimeout(lastTimeoutId);
-    setSearch(value);
-    setLastTimeoutId(window.setTimeout(() => setQuery(value), SEARCH_WAIT_MS))
-  }
-
-  function handleClearClick() {
-    lastTimeoutId && window.clearTimeout(lastTimeoutId);
-    setSearch('');
-    setQuery(null);
-  }
-
   if (state.isLoading) {
     return <div>Loading...</div>;
   }
@@ -93,13 +77,6 @@ function TodoListView({query, setQuery}: Props) {
         >Add</button>
       </div>
       <div>
-        Search
-        <input 
-          type="text"
-          value={search == null ? '' : search}
-          onChange={handleSeachChange}
-        />
-        <button onClick={handleClearClick}>Clear Search</button>
         <label> 
           <input 
             type="checkbox" 
@@ -118,10 +95,7 @@ function TodoListView({query, setQuery}: Props) {
         </label>
       </div>
       <ul>
-        {state.todos.slice().sort((a, b) => b.createdAt - a.createdAt).filter(todo => {
-          if (query != null && !todo.text.match(query)) {
-            return false;
-          }
+        {todos.slice().sort((a, b) => b.createdAt - a.createdAt).filter(todo => {
           if (etaFilter === 'with' && todo.eta == null) {
             return false;
           }
