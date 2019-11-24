@@ -9,10 +9,14 @@ import useDataApi from './useDataApi';
 import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
 import useIsOnline from './useIsOnline';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
 
 const {useState, useEffect, useMemo} = React;
-
-type View = 'CALENDAR' | 'GOALS' | 'TODO_LIST' | 'GANT' | 'WALL';
 
 function Overlay({isVisible}) {
   const style = {
@@ -29,7 +33,6 @@ function Overlay({isVisible}) {
 }
 
 function App() {
-  const [view, setView] = useState<View>('TODO_LIST');
   const {
     state,
     addTodo,
@@ -69,29 +72,44 @@ function App() {
       updateTodoEta,
     }}>
       <StateContext.Provider value={state}>
-        <div style={{margin: '1em'}}>
-          <button onClick={() => setView('TODO_LIST')}>Todos</button>
-          <button onClick={() => setView('GOALS')}>Goals</button>
-          <button onClick={() => setView('CALENDAR')}>Calendar</button>
-          <button onClick={() => setView('WALL')}>Wall</button>
-          <button onClick={() => setView('GANT')}>Gant</button>
-          <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
-          <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
-            {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
-          </select>
-        </div>
-        {
-          view === 'GOALS' ?
-            <GoalsView /> :
-            view === 'CALENDAR' ?
-            <CalendarView /> :
-            view === 'GANT' ?
-            <GantView /> :
-            view === 'WALL' ?
-            <WallView /> :
-            <TodoListView />
-        }
-        <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />
+        <Router>
+          <div style={{
+            display:'flex', 
+            flexWrap: 'wrap', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginLeft: '1em',
+            marginRight: '1em'
+          }}> 
+            <Link to="/">Todos</Link>
+            <Link to="/goals">Goals</Link>
+            <Link to="/calendar">Calendar</Link>
+            <Link to="/wall">Wall</Link>
+            <Link to="/gant">Gant</Link>
+            <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
+            <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
+              {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          </div>
+          <Switch>
+            <Route path="/goals">
+              <GoalsView />
+            </Route>
+            <Route path="/calendar">
+              <CalendarView />
+            </Route>
+            <Route path="/gant">
+              <GantView />
+            </Route>
+            <Route path="/wall">
+              <WallView />
+            </Route>
+            <Route path="/">
+              <TodoListView />
+            </Route>
+          </Switch>
+          <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />
+        </Router>
       </StateContext.Provider>
     </DispatchContext.Provider>
   )

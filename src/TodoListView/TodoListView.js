@@ -75,14 +75,6 @@ function TodoListView() {
     <>
       <div style={{
         display:'flex', 
-        flexWrap: 'wrap', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        padding: '1em'
-      }}> 
-      </div>
-      <div style={{
-        display:'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         padding: '1em'
