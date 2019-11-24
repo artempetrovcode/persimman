@@ -2,14 +2,16 @@
 import type {Todo} from '../Todo';
 import * as React from 'react';
 import {getDateForThisZone, getDayTimestampForThisZone2, formatDateTime, nextDayOffset} from '../lib/timeUtils';
-import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import TodoDateTimeInput  from '../TodoListView/TodoDateTimeInput';
 
 const {useContext} = React;
 
-function GantView() {
-  const state = useContext(StateContext);
+type Props = $ReadOnly<{|
+  todos: $ReadOnlyArray<Todo>,
+|}>;
+
+function GantView({todos}: Props) {
   const commands = useContext(DispatchContext);
   if (commands == null) {
     return null;
@@ -20,7 +22,7 @@ function GantView() {
     [getDayTimestampForThisZone2(Date.now())]: [],
   };
 
-  const todosWithEta = state.todos
+  const todosWithEta = todos
     .filter((todo: Todo) => todo.completedAt == null && todo.eta != null)
     .sort((a: Todo, b: Todo) => a.eta == null || b.eta == null ? 0 : a.eta - b.eta)
 

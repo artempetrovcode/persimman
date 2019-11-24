@@ -37,6 +37,7 @@ function Overlay({isVisible}) {
   return isVisible ? <div style={style}></div> : null;
 }
 
+const URL_PARAM_APP = 'app';
 const URL_PARAM_QUERY = 'q';
 
 function useQuery() {
@@ -82,7 +83,8 @@ type ContentProps = {|
 |};
 
 function Content({state}: ContentProps) {
-  const query = useQuery();
+  const location = useLocation();
+  const query = new URLSearchParams(useLocation().search);
   const history = useHistory();
   const isOnline = useIsOnline();
   const timeOffsetInMsOptions = useMemo(() => {
@@ -99,18 +101,22 @@ function Content({state}: ContentProps) {
   }, []);
   const {setTimeOffsetInMs} = useDataApi();
   const handleSetQuery = (query: ?string): void => {
-    if (query == null) {
-      history.replace(`/`);
+    if (query == null || query === '') {
+      history.replace(`${location.pathname}`);
     } else {
-      history.replace(`/?${URL_PARAM_QUERY}=${query}`)
+      history.replace(`${location.pathname}?${URL_PARAM_QUERY}=${query}`)
     }
   }
 
   const queryValue = query.get(URL_PARAM_QUERY);
-  const filteredTodos = queryValue == null ?
+  const regExp = queryValue == null || queryValue == '' ?
+    null :
+    new RegExp(queryValue, 'i');
+
+  const filteredTodos = regExp == null ?
     state.todos :
     state.todos.filter(todo => {
-      if (queryValue != null && !todo.text.match(queryValue)) {
+      if (!todo.text.match(regExp)) {
         return false;
       }
       return true;
@@ -145,7 +151,7 @@ function Content({state}: ContentProps) {
         <CalendarView />
       </Route>
       <Route path="/gant">
-        <GantView />
+        <GantView todos={filteredTodos} />
       </Route>
       <Route path="/wall">
         <WallView />

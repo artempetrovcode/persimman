@@ -7,5 +7,6 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: path.resolve(__dirname, 'docs'),
+    historyApiFallback: true,
   },
 });
