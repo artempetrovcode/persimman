@@ -135,11 +135,11 @@ function Content({state}: ContentProps) {
       marginLeft: '1em',
       marginRight: '1em'
     }}> 
-      <Link to={`${PUBLIC_PATH}`}>Todos</Link>
-      <Link to={`${PUBLIC_PATH}goals`}>Goals</Link>
-      <Link to={`${PUBLIC_PATH}calendar`}>Calendar</Link>
-      <Link to={`${PUBLIC_PATH}wall`}>Wall</Link>
-      <Link to={`${PUBLIC_PATH}gant`}>Gant</Link>
+      <Link to={`${PUBLIC_PATH}/`}>Todos</Link>
+      <Link to={`${PUBLIC_PATH}/goals`}>Goals</Link>
+      <Link to={`${PUBLIC_PATH}/calendar`}>Calendar</Link>
+      <Link to={`${PUBLIC_PATH}/wall`}>Wall</Link>
+      <Link to={`${PUBLIC_PATH}/gant`}>Gant</Link>
       <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
       <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
         {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
