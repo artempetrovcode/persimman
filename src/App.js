@@ -103,12 +103,16 @@ function Content({state}: ContentProps) {
     });
   }, []);
   const {setTimeOffsetInMs} = useDataApi();
-  const handleSetQuery = (query: ?string): void => {
-    if (query == null || query === '') {
-      history.replace(`${location.pathname}`);
+  function getQuerySearch(queryValue: ?string): string {
+    if (queryValue == null || queryValue === '') {
+      return '';
     } else {
-      history.replace(`${location.pathname}?${URL_PARAM_QUERY}=${query}`)
+      return `?${URL_PARAM_QUERY}=${queryValue}`;
     }
+  }
+
+  const handleSetQuery = (queryValue: ?string): void => {
+    history.replace(`${location.pathname}${getQuerySearch(queryValue)}`);
   }
 
   const queryValue = query.get(URL_PARAM_QUERY);
@@ -135,11 +139,11 @@ function Content({state}: ContentProps) {
       marginLeft: '1em',
       marginRight: '1em'
     }}> 
-      <Link to={`${PUBLIC_PATH}/`}>Todos</Link>
-      <Link to={`${PUBLIC_PATH}/goals`}>Goals</Link>
-      <Link to={`${PUBLIC_PATH}/calendar`}>Calendar</Link>
-      <Link to={`${PUBLIC_PATH}/wall`}>Wall</Link>
-      <Link to={`${PUBLIC_PATH}/gant`}>Gant</Link>
+      <Link to={`${PUBLIC_PATH}/${getQuerySearch(queryValue)}`}>Todos</Link>
+      <Link to={`${PUBLIC_PATH}/goals${getQuerySearch(queryValue)}`}>Goals</Link>
+      <Link to={`${PUBLIC_PATH}/calendar${getQuerySearch(queryValue)}`}>Calendar</Link>
+      <Link to={`${PUBLIC_PATH}/wall${getQuerySearch(queryValue)}`}>Wall</Link>
+      <Link to={`${PUBLIC_PATH}/gant${getQuerySearch(queryValue)}`}>Gant</Link>
       <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
       <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
         {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
