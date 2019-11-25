@@ -37,6 +37,9 @@ function Overlay({isVisible}) {
   return isVisible ? <div style={style}></div> : null;
 }
 
+declare var ENV_PUBLIC_PATH: string;
+
+const PUBLIC_PATH = ENV_PUBLIC_PATH; 
 const URL_PARAM_APP = 'app';
 const URL_PARAM_QUERY = 'q';
 
@@ -132,11 +135,11 @@ function Content({state}: ContentProps) {
       marginLeft: '1em',
       marginRight: '1em'
     }}> 
-      <Link to="/">Todos</Link>
-      <Link to="/goals">Goals</Link>
-      <Link to="/calendar">Calendar</Link>
-      <Link to="/wall">Wall</Link>
-      <Link to="/gant">Gant</Link>
+      <Link to={`${PUBLIC_PATH}`}>Todos</Link>
+      <Link to={`${PUBLIC_PATH}goals`}>Goals</Link>
+      <Link to={`${PUBLIC_PATH}calendar`}>Calendar</Link>
+      <Link to={`${PUBLIC_PATH}wall`}>Wall</Link>
+      <Link to={`${PUBLIC_PATH}gant`}>Gant</Link>
       <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
       <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
         {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
@@ -144,19 +147,19 @@ function Content({state}: ContentProps) {
       <Search setQuery={handleSetQuery} query={query.get(URL_PARAM_QUERY)} />
     </div>
     <Switch>
-      <Route path="/goals">
+      <Route path={`${PUBLIC_PATH}/goals`}>
         <GoalsView />
       </Route>
-      <Route path="/calendar">
+      <Route path={`${PUBLIC_PATH}/calendar`}>
         <CalendarView />
       </Route>
-      <Route path="/gant">
+      <Route path={`${PUBLIC_PATH}/gant`}>
         <GantView todos={filteredTodos} />
       </Route>
-      <Route path="/wall">
+      <Route path={`${PUBLIC_PATH}/wall`}>
         <WallView />
       </Route>
-      <Route path="/">
+      <Route path={`${PUBLIC_PATH}/`}>
         <TodoListView todos={filteredTodos} />
       </Route>
     </Switch>
