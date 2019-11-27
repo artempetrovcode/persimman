@@ -9,6 +9,7 @@ type Props = {
 	onCancel: () => void,
 	onChange: (value: number) => void,
 	timestamp: number,
+	displayTime?: boolean,
 }
 
 function TodoDateTimeInput(props: Props) {
@@ -36,12 +37,13 @@ function TodoDateTimeInput(props: Props) {
 
 	return <>
 		<input 
+			size="10"
 			type="date" 
 			value={dateISOValue} 
 			onBlur={handleDateBlur}
 			onChange={handleDateChange}
 		/>
-		<input type="time" value={timeISOValue} disabled={true} />
+		{props.displayTime !== false ? <input type="time" value={timeISOValue} disabled={true} /> : null}
 	</>;
 } 
 

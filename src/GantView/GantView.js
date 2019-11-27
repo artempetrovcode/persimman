@@ -57,8 +57,12 @@ function GantView({todos}: Props) {
         <tr>
           <th></th>
           {sortedDayTimestamps.map(dayTimestamp => (
-            <th key={dayTimestamp}>
-              <pre>{(new Date(Number(dayTimestamp)).toDateString()).replace(/ /g, '\n')}</pre>
+            <th key={dayTimestamp} style={{ background: isDayOff(dayTimestamp)? 'lightgrey' : 'none' }}>
+              <pre>{
+                (new Date(Number(dayTimestamp)).toDateString())
+                  .replace(/\s\d{4}$/, '')
+                  .replace(/^(\w)\w\w\s(\w)\w\w/, '$1 $2')
+                  .replace(/ /g, '\n')}</pre>
             </th>
           ))}
         </tr>
@@ -67,17 +71,23 @@ function GantView({todos}: Props) {
         {todosWithEta.map(todo => (
           <tr key={todo.id}>
             <td style={{whiteSpace: 'nowrap'}}>
-              {todo.text}
-              <span>, ETA: </span>
-              {
-                todo.eta == null ?
-                'not set' :
-                <TodoDateTimeInput 
-                  onChange={newEta => handleEtaChange(todo, newEta)}
-                  onCancel={() => {}}
-                  timestamp={todo.eta}
-                />
-              }     
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div>
+                  {todo.text}
+                </div>
+                <div>
+                  {
+                    todo.eta == null ?
+                      'ETA: Not Set' :
+                      <TodoDateTimeInput 
+                        displayTime={false}
+                        onChange={newEta => handleEtaChange(todo, newEta)}
+                        onCancel={() => {}}
+                        timestamp={todo.eta}
+                      />
+                  }    
+                </div> 
+              </div>
             </td>
             {sortedDayTimestamps.reduce((list, dayTimestamp) => {
               const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 
