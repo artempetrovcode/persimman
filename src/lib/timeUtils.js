@@ -13,6 +13,19 @@ export function getDayTimestampForThisZone(createdAt: number): number {
   return date.getTime();
 }
 
+const DAYS_OFF = [
+  1574928000000,
+  1575014400000,
+  1575100800000,
+  1575187200000,
+  1575705600000,
+  1575792000000,
+];
+
+export function isDayOff(dayTimestamp: number): boolean {
+  return DAYS_OFF.includes(dayTimestamp);
+}
+
 export function getDayTimestampForThisZone2(createdAt: number): number {
   const date = new Date(createdAt);
   date.setHours(0);

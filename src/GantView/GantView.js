@@ -1,7 +1,7 @@
 // @flow
 import type {Todo} from '../Todo';
 import * as React from 'react';
-import {getDateForThisZone, getDayTimestampForThisZone2, formatDateTime, nextDayOffset} from '../lib/timeUtils';
+import {getDateForThisZone, getDayTimestampForThisZone2, formatDateTime, nextDayOffset, isDayOff} from '../lib/timeUtils';
 import DispatchContext from '../DispatchContext';
 import TodoDateTimeInput  from '../TodoListView/TodoDateTimeInput';
 
@@ -83,9 +83,18 @@ function GantView({todos}: Props) {
               const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 
               const etaDayTimestamp = getDayTimestampForThisZone2(todo.eta);
               let style = null;
-              if (createdAtTimestamp <= dayTimestamp && dayTimestamp <= etaDayTimestamp) {
-                style = {background: 'lightgreen'};
+              if (isDayOff(dayTimestamp)) {
+                if (dayTimestamp === etaDayTimestamp) {
+                  style = {background: 'lightred'};
+                } else {
+                  style = {background: 'lightgrey'};
+                }
+              } else {
+                if (createdAtTimestamp <= dayTimestamp && dayTimestamp <= etaDayTimestamp) {
+                  style = {background: 'lightgreen'};
+                }
               }
+
               list.push(<td key={dayTimestamp} style={style}></td>);
               return list;  
             }, [])}
