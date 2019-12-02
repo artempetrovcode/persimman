@@ -18,15 +18,15 @@ function GantView({todos}: Props) {
   }
   const { updateTodoEta } = commands;
 
+  const todayTimestamp = getDayTimestampForThisZone2(Date.now());
+
   const groupedByDate = {
-    [getDayTimestampForThisZone2(Date.now())]: [],
+    [todayTimestamp]: [],
   };
 
   const todosWithEta = todos
     .filter((todo: Todo) => todo.completedAt == null && todo.eta != null)
     .sort((a: Todo, b: Todo) => a.eta == null || b.eta == null ? 0 : a.eta - b.eta)
-
-  const todayTimestamp = getDayTimestampForThisZone2(Date.now());
 
   todosWithEta
     .forEach((todo: Todo) => {
@@ -44,12 +44,17 @@ function GantView({todos}: Props) {
   const timeKeys = Object.keys(groupedByDate);
   const minTime = Math.min.apply(null, timeKeys);
   const maxTime = Math.max.apply(null, timeKeys);
+  
   const sortedDayTimestamps = [];
-  for (let t = minTime; t <= maxTime; t += nextDayOffset) {
-    sortedDayTimestamps.push(t);
-    if (groupedByDate[t] === undefined) {
-      groupedByDate[t] = [];
+  let date = new Date(minTime);
+  let timestamp = date.getTime();
+  while (timestamp <= maxTime) {
+    sortedDayTimestamps.push(timestamp);
+    if (groupedByDate[timestamp] === undefined) {
+      groupedByDate[timestamp] = [];
     }
+    date.setDate(date.getDate() + 1);
+    timestamp = date.getTime();
   }
 
   function handleEtaChange(todo, newEta: number) {

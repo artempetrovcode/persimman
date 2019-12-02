@@ -23,15 +23,21 @@ const DAYS_OFF = [
 ];
 
 export function isDayOff(dayTimestamp: number): boolean {
+  const date = new Date(dayTimestamp);
+  const day = date.getDay();
+  if (day === 0 || day === 6) {
+    // Sun or Sat
+    return true;
+  }
   return DAYS_OFF.includes(dayTimestamp);
 }
 
 export function getDayTimestampForThisZone2(createdAt: number): number {
   const date = new Date(createdAt);
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
+  date.setHours(0, 0, 0, 0);
+  // date.setMinutes(0);
+  // date.setSeconds(0);
+  // date.setMilliseconds(0);
   return date.getTime();
 }
 
