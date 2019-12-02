@@ -1,7 +1,7 @@
 // @flow
 import type {Todo} from '../Todo';
 import * as React from 'react';
-import {getDateForThisZone, getDayTimestampForThisZone2, formatDateTime, nextDayOffset, isDayOff} from '../lib/timeUtils';
+import {getDateForThisZone, getDayTimestampForThisZone2, getISODateString, nextDayOffset, isDayOff} from '../lib/timeUtils';
 import DispatchContext from '../DispatchContext';
 import TodoDateTimeInput  from '../TodoListView/TodoDateTimeInput';
 
@@ -26,13 +26,19 @@ function GantView({todos}: Props) {
     .filter((todo: Todo) => todo.completedAt == null && todo.eta != null)
     .sort((a: Todo, b: Todo) => a.eta == null || b.eta == null ? 0 : a.eta - b.eta)
 
+  const todayTimestamp = getDayTimestampForThisZone2(Date.now());
+
   todosWithEta
     .forEach((todo: Todo) => {
-      const dayTimestamp = getDayTimestampForThisZone2(todo.eta);
-      if (groupedByDate[dayTimestamp] === undefined) {
-        groupedByDate[dayTimestamp] = [];
+      const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 
+      const etaDayTimestamp = getDayTimestampForThisZone2(todo.eta);
+      if (groupedByDate[etaDayTimestamp] === undefined) {
+        groupedByDate[etaDayTimestamp] = [];
       }
-      groupedByDate[dayTimestamp].push(todo);
+      if (groupedByDate[createdAtTimestamp] === undefined) {
+        groupedByDate[createdAtTimestamp] = [];
+      }
+      groupedByDate[etaDayTimestamp].push(todo);
   });
 
   const timeKeys = Object.keys(groupedByDate);
@@ -49,7 +55,6 @@ function GantView({todos}: Props) {
   function handleEtaChange(todo, newEta: number) {
     updateTodoEta(todo, newEta);
   }
-
   return (
     <>
     <table border="1px" style={{borderCollapse: 'collapse'}}>
@@ -57,7 +62,11 @@ function GantView({todos}: Props) {
         <tr>
           <th></th>
           {sortedDayTimestamps.map(dayTimestamp => (
-            <th key={dayTimestamp} style={{ background: isDayOff(dayTimestamp)? 'lightgrey' : 'none' }}>
+            <th key={dayTimestamp} style={{ 
+              borderLeft: todayTimestamp === dayTimestamp ? '2px solid black' : '1px solid',
+              borderRight: todayTimestamp === dayTimestamp ? '2px solid black' : '1px solid',
+              backgroundColor: isDayOff(dayTimestamp) ? 'lightgrey' : 'none',
+            }}>
               <pre>{
                 (new Date(Number(dayTimestamp)).toDateString())
                   .replace(/\s\d{4}$/, '')
@@ -70,39 +79,62 @@ function GantView({todos}: Props) {
       <tbody>
         {todosWithEta.map(todo => (
           <tr key={todo.id}>
-            <td style={{whiteSpace: 'nowrap'}}>
+            <td>
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <div>
+                <div style={{lineHeight: '19px', whiteSpace: 'pre-line'}}>
                   {todo.text}
                 </div>
                 <div>
+                  <div>
+                  {'createdAt: ' + getISODateString(new Date(todo.createdAt))}
+                  </div>
+                  <div>
                   {
                     todo.eta == null ?
-                      'ETA: Not Set' :
-                      <TodoDateTimeInput 
-                        displayTime={false}
-                        onChange={newEta => handleEtaChange(todo, newEta)}
-                        onCancel={() => {}}
-                        timestamp={todo.eta}
-                      />
+                      'eta: Not Set' :
+                      <>
+                        {'eta: '}
+                        <TodoDateTimeInput 
+                          displayTime={false}
+                          onChange={newEta => handleEtaChange(todo, newEta)}
+                          onCancel={() => {}}
+                          timestamp={todo.eta}
+                        />
+                      </>
                   }    
+                  </div>
                 </div> 
               </div>
             </td>
             {sortedDayTimestamps.reduce((list, dayTimestamp) => {
               const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 
               const etaDayTimestamp = getDayTimestampForThisZone2(todo.eta);
-              let style = null;
+              let style = {
+                backgroundColor: 'none',
+              };
               if (isDayOff(dayTimestamp)) {
-                if (dayTimestamp === etaDayTimestamp) {
-                  style = {background: 'lightred'};
+                if (createdAtTimestamp <= dayTimestamp && dayTimestamp <= etaDayTimestamp) {
+                  if (dayTimestamp === etaDayTimestamp) {
+                    style.backgroundColor = 'red';
+                  } else{
+                    style.backgroundColor = 'green';
+                  }
                 } else {
-                  style = {background: 'lightgrey'};
+                  style.backgroundColor = 'lightgrey';
                 }
               } else {
                 if (createdAtTimestamp <= dayTimestamp && dayTimestamp <= etaDayTimestamp) {
-                  style = {background: 'lightgreen'};
+                  style.backgroundColor = 'lightgreen';
+                } else {
+                  style.backgroundColor = 'none';
                 }
+              }
+              if (style != null && todayTimestamp === dayTimestamp) {
+                style = { 
+                  ...style,
+                  borderLeft: '2px solid black',
+                  borderRight: '2px solid black',
+                };
               }
 
               list.push(<td key={dayTimestamp} style={style}></td>);
