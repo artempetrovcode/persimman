@@ -19,11 +19,16 @@ function Bar(props) {
   const minTime = Math.min.apply(null, timeKeys);
   const maxTime = Math.max.apply(null, timeKeys);
 
-  for (let t = minTime; t <= maxTime; t += nextDayOffset) {
-    times.push(t);
-    if (groupedByDate[t] === undefined) {
-      groupedByDate[t] = [];
+  let date = new Date(minTime);
+  let timestamp = date.getTime();
+  while (timestamp <= maxTime) {
+    times.push(timestamp);
+    if (groupedByDate[timestamp] === undefined) {
+      groupedByDate[timestamp] = [];
     }
+
+    date.setDate(date.getDate() + 1);
+    timestamp = date.getTime();
   }
 
   const {maxSum, sumByTime} = times.reduce(({maxSum, lastLengths, sumByTime}, time) => {
