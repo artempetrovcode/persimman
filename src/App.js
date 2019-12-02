@@ -42,6 +42,7 @@ declare var ENV_PUBLIC_PATH: string;
 const PUBLIC_PATH = ENV_PUBLIC_PATH; 
 const URL_PARAM_APP = 'app';
 const URL_PARAM_QUERY = 'q';
+const NEGATIVE_QUERY_PREFIX = '!';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -104,7 +105,7 @@ function Content({state}: ContentProps) {
   }, []);
   const {setTimeOffsetInMs} = useDataApi();
   function getQuerySearch(queryValue: ?string): string {
-    if (queryValue == null || queryValue === '') {
+    if (queryValue == null || queryValue === '' || queryValue === NEGATIVE_QUERY_PREFIX) {
       return '';
     } else {
       return `?${URL_PARAM_QUERY}=${queryValue}`;
@@ -116,17 +117,24 @@ function Content({state}: ContentProps) {
   }
 
   const queryValue = query.get(URL_PARAM_QUERY);
-  const regExp = queryValue == null || queryValue == '' ?
+  const isNegativeSearch = 
+    queryValue != null &&
+    queryValue !== '' &&
+    queryValue.substr(0, 1) === NEGATIVE_QUERY_PREFIX;
+
+  const regExp = queryValue == null || queryValue === '' ?
     null :
-    new RegExp(queryValue, 'i');
+    isNegativeSearch ?
+      new RegExp(queryValue.substring(1), 'i'):
+      new RegExp(queryValue, 'i');
 
   const filteredTodos = regExp == null ?
     state.todos :
     state.todos.filter(todo => {
       if (!todo.text.match(regExp)) {
-        return false;
+        return isNegativeSearch;
       }
-      return true;
+      return !isNegativeSearch;
     });
 
   return (
