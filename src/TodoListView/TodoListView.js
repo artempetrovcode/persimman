@@ -95,19 +95,7 @@ function TodoListView({todos}: Props) {
         </label>
       </div>
       <ul>
-        {todos.slice().sort((a, b) => b.createdAt - a.createdAt).filter(todo => {
-          if (etaFilter === 'with' && todo.eta == null) {
-            return false;
-          }
-          if (etaFilter === 'without' && todo.eta != null) {
-            return false;
-          }
-          if (showCompleted) {
-            return true;
-          } else {
-            return todo.completedAt == null;
-          }
-        }).map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
+        {todos.slice().sort((a, b) => b.createdAt - a.createdAt).map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
       </ul>
     </>
   )

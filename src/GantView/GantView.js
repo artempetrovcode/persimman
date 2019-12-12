@@ -25,7 +25,7 @@ function GantView({todos}: Props) {
   };
 
   const todosWithEta = todos
-    .filter((todo: Todo) => todo.completedAt == null && todo.eta != null)
+    .filter((todo: Todo) => todo.eta != null)
     .sort((a: Todo, b: Todo) => a.eta == null || b.eta == null ? 0 : a.eta - b.eta)
 
   todosWithEta

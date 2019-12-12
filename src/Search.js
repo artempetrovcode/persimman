@@ -35,7 +35,7 @@ function Search({query, setQuery}: Props) {
         value={search == null ? '' : search}
         onChange={handleSeachChange}
       />
-      <button onClick={handleClearClick}>Clear Search</button>
+      <button onClick={handleClearClick}>Clear</button>
     </div>
   )
 }
