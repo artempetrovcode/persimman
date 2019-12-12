@@ -16,7 +16,7 @@ function GantView({todos}: Props) {
   if (commands == null) {
     return null;
   }
-  const { updateTodoEta } = commands;
+  const { updateTodoEta, updateTodoStatus } = commands;
 
   const todayTimestamp = getDayTimestampForThisZone2(Date.now());
 
@@ -57,8 +57,11 @@ function GantView({todos}: Props) {
     timestamp = date.getTime();
   }
 
-  function handleEtaChange(todo, newEta: number) {
+  function handleEtaChange(todo: Todo, newEta: number) {
     updateTodoEta(todo, newEta);
+  }
+  function handleIsCompletedChange(todo: Todo, isCompleted: boolean) {
+    updateTodoStatus(todo, isCompleted);
   }
   return (
     <>
@@ -85,8 +88,15 @@ function GantView({todos}: Props) {
         {todosWithEta.map(todo => (
           <tr key={todo.id}>
             <td>
-              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <div style={{lineHeight: '19px', whiteSpace: 'pre-line'}}>
+                  <input
+                    checked={todo.completedAt != null}
+                    type="checkbox"
+                    onChange={e => {
+                      handleIsCompletedChange(todo, e.target.checked);
+                    }}
+                  />
                   {todo.text}
                 </div>
                 <div>
