@@ -74,67 +74,65 @@ function TodoItem({todo}: Props) {
   const spans = splitText(text, (t, index) => <span key={index}>{t}</span>, (t, index) => <span style={style} key={index}>{t}</span>)
 
   return (
-    <li>
-      <div style={{display: 'flex'}}>
-        <input
-          checked={completedAt != null}
-          type="checkbox"
-          onChange={handleCheckboxChange}
-        />
-        {isEditing ?
-          <>
-          <TodoInput 
-            style={{flex:1}}
-            onCancel={handleInputCancel}
-            onDelete={handleInputDelete}
-            onChange={handleInputChange}
-            initialValue={decode(text)} />
-          </> :
-          <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>
-            {completedAt == null ? 
-              <span onClick={handleLabelClick}>{spans}</span> :
-              <>
-                <s onClick={handleLabelClick}>{spans}</s>
-                <span> [{formatDateTime(completedAt)}]</span>
-              </>
+    <div style={{display: 'flex'}}>
+      <input
+        checked={completedAt != null}
+        type="checkbox"
+        onChange={handleCheckboxChange}
+      />
+      {isEditing ?
+        <>
+        <TodoInput 
+          style={{flex:1}}
+          onCancel={handleInputCancel}
+          onDelete={handleInputDelete}
+          onChange={handleInputChange}
+          initialValue={decode(text)} />
+        </> :
+        <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>
+          {completedAt == null ? 
+            <span onClick={handleLabelClick}>{spans}</span> :
+            <>
+              <s onClick={handleLabelClick}>{spans}</s>
+              <span> [{formatDateTime(completedAt)}]</span>
+            </>
+          }
+          {eta == null ? null : <u>{`ETA: ${formatDateTime(eta)}`}</u>}
+        </label>
+      }
+      {
+        isEditingProps ?
+          <> 
+            <button onClick={() => setIsEditingProps(false)}>close</button>
+            {
+              completedAt == null ?
+                <button>set completedAt[tbd]</button> :
+                <>
+                  <span>CompletedAt: </span>
+                  <TodoDateTimeInput 
+                    onChange={handleCompletedAtChange}
+                    onCancel={() => {}}
+                    timestamp={completedAt}
+                  />
+                </> 
             }
-            {eta == null ? null : <u>{`ETA: ${formatDateTime(eta)}`}</u>}
-          </label>
-        }
-        {
-          isEditingProps ?
-            <> 
-              <button onClick={() => setIsEditingProps(false)}>close</button>
-              {
-                completedAt == null ?
-                  <button>set completedAt[tbd]</button> :
-                  <>
-                    <span>CompletedAt: </span>
-                    <TodoDateTimeInput 
-                      onChange={handleCompletedAtChange}
-                      onCancel={() => {}}
-                      timestamp={completedAt}
-                    />
-                  </> 
-              }
-              {
-                eta == null ?
-                  <button onClick={() => handleEtaChange(getTodayMidnightTimestamp())}>set eta</button> :
-                  <>
-                    <span>ETA: </span>
-                    <TodoDateTimeInput 
-                      onChange={handleEtaChange}
-                      onCancel={() => {}}
-                      timestamp={eta}
-                    />
-                  </> 
-              }
-              <button onClick={handleDeleteClick}>delete</button>
-            </> :
-            <button onClick={() => setIsEditingProps(true)}>edit props</button>
-        }
-      </div>
-    </li>
+            {
+              eta == null ?
+                <button onClick={() => handleEtaChange(getTodayMidnightTimestamp())}>set eta</button> :
+                <>
+                  <span>ETA: </span>
+                  <TodoDateTimeInput 
+                    onChange={handleEtaChange}
+                    onCancel={() => {}}
+                    timestamp={eta}
+                  />
+                </> 
+            }
+            <button onClick={handleDeleteClick}>delete</button>
+          </> :
+          <button onClick={() => setIsEditingProps(true)}>edit props</button>
+      }
+    </div>
   );
 }
 

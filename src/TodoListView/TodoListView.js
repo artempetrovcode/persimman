@@ -95,7 +95,7 @@ function TodoListView({todos}: Props) {
         </label>
       </div>
       <ul>
-        {todos.slice().sort((a, b) => b.createdAt - a.createdAt).map((todo, i) => <TodoItem key={todo.id} todo={todo} /> )}
+        {todos.slice().sort((a, b) => b.createdAt - a.createdAt).map((todo, i) => <li key={todo.id}><TodoItem todo={todo} /></li> )}
       </ul>
     </>
   )
