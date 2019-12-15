@@ -1,5 +1,6 @@
 // @flow
 import type {State} from './useDataReducer';
+import type {Todo} from './Todo';
 import * as React from 'react';
 import CalendarView from './CalendarView/CalendarView';
 import GoalsView from './GoalsView/GoalsView';
@@ -158,26 +159,34 @@ function Content({state}: ContentProps) {
     );
     history.replace(`${location.pathname}${search}`);
   }
-  
-  const isNegativeSearch = 
-    queryValue != null &&
-    queryValue !== '' &&
-    queryValue.substr(0, 1) === NEGATIVE_QUERY_PREFIX;
 
-  const regExp = queryValue == null || queryValue === '' ?
-    null :
-    isNegativeSearch ?
-      new RegExp(queryValue.substring(1), 'i'):
-      new RegExp(queryValue, 'i');
+  const queryTerms = queryValue != null ? queryValue.split(' ') : [];
 
-  const filteredTodos = (regExp == null ?
-    state.todos :
-    state.todos.filter(todo => {
-      if (!todo.text.match(regExp)) {
-        return isNegativeSearch;
-      }
-      return !isNegativeSearch;
-    })).filter(todo => {
+  function filterForQuery(todos: $ReadOnlyArray<Todo>, queryValue: string) {
+    const isNegativeSearch = 
+      queryValue != null &&
+      queryValue !== '' &&
+      queryValue.substr(0, 1) === NEGATIVE_QUERY_PREFIX;
+    
+    const regExp = queryValue == null || queryValue === '' ?
+      null :
+      isNegativeSearch ?
+        new RegExp(queryValue.substring(1), 'i'):
+        new RegExp(queryValue, 'i');
+
+    return regExp == null ?
+      todos :
+      todos.filter(todo => {
+        if (!todo.text.match(regExp)) {
+          return isNegativeSearch;
+        }
+        return !isNegativeSearch;
+      });
+  }
+
+  const filteredTodos = queryTerms
+    .reduce(filterForQuery, state.todos)
+    .filter(todo => {
       if (etaValue === 'with' && todo.eta == null) {
         return false;
       }
