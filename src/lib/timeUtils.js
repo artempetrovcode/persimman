@@ -20,6 +20,10 @@ const DAYS_OFF = [
   1575187200000,
   1575705600000,
   1575792000000,
+  1577174400000,
+  1577260800000,
+  1577779200000,
+  1577865600000,
 ];
 
 export function isDayOff(dayTimestamp: number): boolean {
