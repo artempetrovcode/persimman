@@ -47,6 +47,10 @@ const URL_PARAM_QUERY = 'q';
 const URL_PARAM_SHOULD_SHOW_COMPLETED = 'c';
 const URL_PARAM_ETA = 'e';
 const NEGATIVE_QUERY_PREFIX = '!';
+// links/buttons bg: #85a7ea
+// button color text: #1b1c1d
+const BACKGROUND_DARK = '#1a1a1a';
+const COLOR_DARK = '#fdfdfd';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -95,6 +99,7 @@ function Content({state}: ContentProps) {
   const query = new URLSearchParams(useLocation().search);
   const history = useHistory();
   const isOnline = useIsOnline();
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const timeOffsetInMsOptions = useMemo(() => {
     return [
       [0, 'Today'], 
@@ -202,47 +207,58 @@ function Content({state}: ContentProps) {
 
   const searchForLinks = buildSearch(queryValue, shouldShowCompletedValue, etaValue);
 
+  const style = isDarkMode ? {
+    background: BACKGROUND_DARK,
+    color: COLOR_DARK,
+  } : {};
+
   return (
-    <>
-    <div style={{
-      display:'flex', 
-      flexWrap: 'wrap', 
-      justifyContent: 'space-between', 
-      alignItems: 'center', 
-      marginLeft: '1em',
-      marginRight: '1em'
-    }}> 
-      <Link to={`${PUBLIC_PATH}/${searchForLinks}`}>Todos</Link>
-      <Link to={`${PUBLIC_PATH}/goals${searchForLinks}`}>Goals</Link>
-      <Link to={`${PUBLIC_PATH}/calendar${searchForLinks}`}>Calendar</Link>
-      <Link to={`${PUBLIC_PATH}/wall${searchForLinks}`}>Wall</Link>
-      <Link to={`${PUBLIC_PATH}/gant${searchForLinks}`}>Gant</Link>
-      <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
-      <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
-        {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
-      </select>
-      <Search setQuery={handleSetQuery} query={query.get(URL_PARAM_QUERY)} />
-      <Filters setFilters={handleSetFilters} />
+    <div style={style}>
+      <div style={{
+        display:'flex', 
+        flexWrap: 'wrap', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginLeft: '1em',
+        marginRight: '1em'
+      }}> 
+        <Link to={`${PUBLIC_PATH}/${searchForLinks}`}>Todos</Link>
+        <Link to={`${PUBLIC_PATH}/goals${searchForLinks}`}>Goals</Link>
+        <Link to={`${PUBLIC_PATH}/calendar${searchForLinks}`}>Calendar</Link>
+        <Link to={`${PUBLIC_PATH}/wall${searchForLinks}`}>Wall</Link>
+        <Link to={`${PUBLIC_PATH}/gant${searchForLinks}`}>Gant</Link>
+        <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
+        <label>
+          <input type="checkbox" value={isDarkMode} onChange={() => {
+            setIsDarkMode(prevValue => !prevValue)
+          }} />
+          Dark Mode
+        </label>
+        <select onChange={e => setTimeOffsetInMs(Number(e.target.value))} value={state.timeOffsetInMs}>
+          {timeOffsetInMsOptions.map(({label, value}) => <option key={value} value={value}>{label}</option>)}
+        </select>
+        <Search setQuery={handleSetQuery} query={query.get(URL_PARAM_QUERY)} />
+        <Filters setFilters={handleSetFilters} />
+      </div>
+      <Switch>
+        <Route path={`${PUBLIC_PATH}/goals`}>
+          <GoalsView />
+        </Route>
+        <Route path={`${PUBLIC_PATH}/calendar`}>
+          <CalendarView />
+        </Route>
+        <Route path={`${PUBLIC_PATH}/gant`}>
+          <GantView todos={filteredTodos} />
+        </Route>
+        <Route path={`${PUBLIC_PATH}/wall`}>
+          <WallView />
+        </Route>
+        <Route path={`${PUBLIC_PATH}/`}>
+          <TodoListView todos={filteredTodos} />
+        </Route>
+      </Switch>
+      <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />
     </div>
-    <Switch>
-      <Route path={`${PUBLIC_PATH}/goals`}>
-        <GoalsView />
-      </Route>
-      <Route path={`${PUBLIC_PATH}/calendar`}>
-        <CalendarView />
-      </Route>
-      <Route path={`${PUBLIC_PATH}/gant`}>
-        <GantView todos={filteredTodos} />
-      </Route>
-      <Route path={`${PUBLIC_PATH}/wall`}>
-        <WallView />
-      </Route>
-      <Route path={`${PUBLIC_PATH}/`}>
-        <TodoListView todos={filteredTodos} />
-      </Route>
-    </Switch>
-    <Overlay isVisible={state.isLoading || state.isUpdating || state.isAppending} />
-    </>
   )
 }
 
