@@ -70,7 +70,12 @@ const useDataApi = () => {
     })
   }
 
-  function updateTodo(todo: Todo) {
+  function updateTodo(t: Todo) {
+    const now = Date.now(); // TODO count timeOffsetInMs;
+    const todo = {
+      ...t,
+      updatedAt: now,
+    }
     dispatch({ type: 'UPDATE_INIT' })
     update(todo).then(todo => {
       dispatch({
@@ -91,6 +96,13 @@ const useDataApi = () => {
     updateTodo({
       ...todo,
       completedAt,
+    })
+  }
+
+  function updateTodoCreatedAt(todo: Todo, createdAt: number): void {
+    updateTodo({
+      ...todo,
+      createdAt,
     })
   }
 
@@ -133,6 +145,7 @@ const useDataApi = () => {
     updateTodoText,
     deleteTodo,
     updateTodoCompletedAt,
+    updateTodoCreatedAt,
     updateTodoEta,
     setTimeOffsetInMs,
   };

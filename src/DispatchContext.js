@@ -10,6 +10,7 @@ type Commands = $ReadOnly<{|
   updateTodoText: (todo: Todo, text: string) => void,
   updateTodoCompletedAt: (todo: Todo, completedAt: number) => void,
   updateTodoEta: (todo: Todo, eta: number) => void,
+  updateTodoCreatedAt: (todo: Todo, createdAt: number) => void,
 |}>;
 
 const DispatchContext = React.createContext<?Commands>(null);

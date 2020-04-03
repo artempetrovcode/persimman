@@ -66,6 +66,7 @@ function App() {
     deleteTodo,
     updateTodoText,
     updateTodoCompletedAt,
+    updateTodoCreatedAt,
     updateTodoEta,
   } = useDataApi();
   
@@ -79,6 +80,7 @@ function App() {
       deleteTodo,
       updateTodoText,
       updateTodoCompletedAt,
+      updateTodoCreatedAt,
       updateTodoEta,
     }}>
       <StateContext.Provider value={state}>

@@ -29,9 +29,10 @@ function TodoItem({todo}: Props) {
     updateTodo, 
     updateTodoText, 
     updateTodoCompletedAt, 
+    updateTodoCreatedAt,
     updateTodoEta
   } = commands;
-  const {id, text, completedAt, isDeleted, createdAt, updatedAt, eta} = todo;
+  const {id, text, createdAt, completedAt, isDeleted, updatedAt, eta} = todo;
 
   function handleCheckboxChange(e) {
     const isCompleted = e.target.checked;
@@ -61,6 +62,9 @@ function TodoItem({todo}: Props) {
   }
   function handleCompletedAtChange(newCompletedAt: number) {
     updateTodoCompletedAt(todo, newCompletedAt);
+  }
+  function handleCreatedAtChange(createdAt: number) {
+    updateTodoCreatedAt(todo, createdAt);
   }
   function handleEtaChange(newEta: number) {
     updateTodoEta(todo, newEta);
@@ -104,6 +108,12 @@ function TodoItem({todo}: Props) {
         isEditingProps ?
           <> 
             <button onClick={() => setIsEditingProps(false)}>close</button>
+            <span>createdAt: </span>
+            <TodoDateTimeInput
+              onChange={handleCreatedAtChange}
+              onCancel={() => {}}
+              timestamp={createdAt}
+            />
             {
               completedAt == null ?
                 <button>set completedAt[tbd]</button> :
