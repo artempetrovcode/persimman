@@ -6,6 +6,7 @@ import CalendarView from './CalendarView/CalendarView';
 import GoalsView from './GoalsView/GoalsView';
 import TodoListView from './TodoListView/TodoListView';
 import GantView from './GantView/GantView';
+import GantHistoryView from './GantHistoryView/GantHistoryView';
 import WallView from './WallView/WallView';
 import Search from './Search';
 import Filters from './Filters';
@@ -229,6 +230,7 @@ function Content({state}: ContentProps) {
         <Link to={`${PUBLIC_PATH}/calendar${searchForLinks}`}>Calendar</Link>
         <Link to={`${PUBLIC_PATH}/wall${searchForLinks}`}>Wall</Link>
         <Link to={`${PUBLIC_PATH}/gant${searchForLinks}`}>Gant</Link>
+        <Link to={`${PUBLIC_PATH}/gant-history${searchForLinks}`}>Gant History</Link>
         <span>{' '}{isOnline ? '✅📶 online' : '🚫📵 offline'}</span>
         <label>
           <input type="checkbox" value={isDarkMode} onChange={() => {
@@ -251,6 +253,9 @@ function Content({state}: ContentProps) {
         </Route>
         <Route path={`${PUBLIC_PATH}/gant`}>
           <GantView todos={filteredTodos} />
+        </Route>
+        <Route path={`${PUBLIC_PATH}/gant-history`}>
+          <GantHistoryView todos={filteredTodos} />
         </Route>
         <Route path={`${PUBLIC_PATH}/wall`}>
           <WallView />

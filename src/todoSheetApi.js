@@ -4,7 +4,7 @@ import type {Todo} from './Todo';
 import type {RowValue} from './sheetsApiV2';
 
 const SPREADSHEET_ID = '1NxlkrGwkxApnHsu6q38wf93aPmCYgqhekHpqgLxawo4';
-const SHEET_NAME = 'todo_dev';
+const SHEET_NAME = 'todo';
 const COLUMN_NAMES_IN_ORDER = [
   'id',          // 0
   'text',        // 1
