@@ -28,6 +28,8 @@ function GantHistoryRow({todo, sortedDayTimestamps, todayTimestamp}: Props) {
     updateTodoStatus(todo, isCompleted);
   }
 
+  const nowTimestamp = Date.now();
+
   return (
     <tr>
       <td>
@@ -36,13 +38,20 @@ function GantHistoryRow({todo, sortedDayTimestamps, todayTimestamp}: Props) {
       {sortedDayTimestamps.reduce((list, dayTimestamp) => {
         const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 
         const completedAtDayTimestamp = todo.completedAt != null ? getDayTimestampForThisZone2(todo.completedAt) : null;
+        const etaDayTimestamp = todo.eta != null ? getDayTimestampForThisZone2(todo.eta) : null;
         let style = {
           backgroundColor: 'none',
         };
         if (isDayOff(dayTimestamp)) {
           if (createdAtTimestamp <= dayTimestamp) {
             if (completedAtDayTimestamp == null) {
-              style.backgroundColor = 'darkorange';
+              if (dayTimestamp <= nowTimestamp) {
+                style.backgroundColor = 'red';
+              } else if (etaDayTimestamp != null && etaDayTimestamp >= dayTimestamp) {
+                style.backgroundColor = '#d2d24b'; // darkyellow
+              } else {
+                style.backgroundColor = 'lightgrey';
+              }
             } else if (dayTimestamp <= completedAtDayTimestamp) {
               style.backgroundColor = 'darkgreen';
             }
@@ -52,7 +61,13 @@ function GantHistoryRow({todo, sortedDayTimestamps, todayTimestamp}: Props) {
         } else {
           if (createdAtTimestamp <= dayTimestamp) {
             if (completedAtDayTimestamp == null) {
-              style.backgroundColor = 'orange';
+              if (dayTimestamp <= nowTimestamp) {
+                style.backgroundColor = 'orangered';
+              } else if (etaDayTimestamp != null && etaDayTimestamp >= dayTimestamp) {
+                style.backgroundColor = 'yellow';
+              } else {
+                style.backgroundColor = 'none';
+              }
             } else if (dayTimestamp <= completedAtDayTimestamp) {
               style.backgroundColor = 'green';
             }

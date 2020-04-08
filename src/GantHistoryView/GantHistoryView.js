@@ -38,6 +38,12 @@ function GantHistoryView({todos}: Props) {
           groupedByDate[completedAtDayTimestamp] = [];
         }
       }
+      if (todo.eta != null) {
+        const etaDayTimestamp = getDayTimestampForThisZone2(todo.eta);
+        if (groupedByDate[etaDayTimestamp] === undefined) {
+          groupedByDate[etaDayTimestamp] = [];
+        }
+      }
       if (groupedByDate[createdAtTimestamp] === undefined) {
         groupedByDate[createdAtTimestamp] = [];
       }
