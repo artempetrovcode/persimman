@@ -54,6 +54,8 @@ function GantHistoryRow({todo, sortedDayTimestamps, todayTimestamp}: Props) {
               }
             } else if (dayTimestamp <= completedAtDayTimestamp) {
               style.backgroundColor = 'darkgreen';
+            } else {
+              style.backgroundColor = 'lightgrey';
             }
           } else {
             style.backgroundColor = 'lightgrey';
