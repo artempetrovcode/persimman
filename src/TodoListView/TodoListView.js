@@ -2,7 +2,6 @@
 import type {Todo} from '../Todo';
 import * as React from 'react';
 import StateContext from '../StateContext';
-import AddTodo from '../AddTodo';
 import TodoItem from './TodoItem';
 
 const {useContext} = React;
@@ -23,12 +22,9 @@ function TodoListView({todos}: Props) {
   }
   
   return (
-    <>
-      <AddTodo />
-      <ul>
-        {todos.slice().sort((a, b) => b.createdAt - a.createdAt).map((todo, i) => <li key={todo.id}><TodoItem todo={todo} /></li> )}
-      </ul>
-    </>
+    <ul>
+      {todos.slice().sort((a, b) => b.createdAt - a.createdAt).map((todo, i) => <li key={todo.id}><TodoItem todo={todo} /></li> )}
+    </ul>
   )
 }
 

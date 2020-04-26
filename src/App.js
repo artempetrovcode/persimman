@@ -14,6 +14,7 @@ import useDataApi from './useDataApi';
 import DispatchContext from './DispatchContext';
 import StateContext from './StateContext';
 import useIsOnline from './useIsOnline';
+import AddTodo from './AddTodo';
  
 import {
   BrowserRouter as Router,
@@ -244,6 +245,7 @@ function Content({state}: ContentProps) {
         <Search setQuery={handleSetQuery} query={query.get(URL_PARAM_QUERY)} />
         <Filters setFilters={handleSetFilters} />
       </div>
+      <AddTodo />
       <Switch>
         <Route path={`${PUBLIC_PATH}/goals`}>
           <GoalsView />
