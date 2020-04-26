@@ -173,5 +173,5 @@ export const formatDateTime = (timestamp: number): string => {
 export const getTodayMidnightTimestamp = () => {
   const now = Date.now();
   const msInADay = 1000 * 60 * 60 * 24;
-  return now - (now % msInADay);
+  return now - (now % msInADay) + msInADay;
 }

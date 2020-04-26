@@ -16,6 +16,7 @@ function AddTodo(props: Props) {
   const state = useContext(StateContext);
   const commands = useContext(DispatchContext);
   const [text, setText] = useState('');
+  const [hasEta, setHasEta] = useState(false);
 
   if (commands == null) {
     return null;
@@ -28,7 +29,7 @@ function AddTodo(props: Props) {
 
   function handleAddClick() {
     if (text !== '') {
-      addTodo(encode(text), false, state.timeOffsetInMs);
+      addTodo(encode(text), false, state.timeOffsetInMs, hasEta);
       setText('');
     }
   }
@@ -37,7 +38,7 @@ function AddTodo(props: Props) {
     if (e.keyCode === ENTER_KEY_CODE && e.metaKey) {
       if (e.shiftKey) {
         if (text !== '') {
-          addTodo(text, true, state.timeOffsetInMs);
+          addTodo(text, true, state.timeOffsetInMs, hasEta);
           setText('');
         }
       } else {
@@ -54,6 +55,11 @@ function AddTodo(props: Props) {
       padding: '1em'
     }}>
       <ResizableTextarea value={text} onChange={value => setText(value)} onKeyDown={handleKeyDown}/>
+      <label>
+        [Has ETA
+        <input type="checkbox" checked={hasEta} onChange={e => setHasEta(e.target.checked)} />
+        ]
+      </label>
       <button
         onClick={handleAddClick}
         style={{margin: '5px'}}

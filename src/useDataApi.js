@@ -44,7 +44,7 @@ const useDataApi = () => {
     return ago;
   }
 
-  function createTodo(text: string, isCompleted: boolean, timeOffsetInMs: number): Todo {
+  function createTodo(text: string, isCompleted: boolean, timeOffsetInMs: number, hasEta: boolean): Todo {
     const now = Date.now() + timeOffsetInMs;
     const todo: Todo = {
       id: uuidv4(),
@@ -53,15 +53,20 @@ const useDataApi = () => {
       isDeleted: false,
       createdAt: now,
       updatedAt: now,
-      eta: null,
+      eta: hasEta ? now : null,
     };
     
     return todo;
   }
 
-  function addTodo(text: string, isCompleted: boolean, timeOffsetInMs: number) {
+  function addTodo(
+    text: string, 
+    isCompleted: boolean, 
+    timeOffsetInMs: number, 
+    hasEta: boolean
+  ) {
     dispatch({ type: 'APPEND_INIT' })
-    const todo = createTodo(text, isCompleted, timeOffsetInMs);
+    const todo = createTodo(text, isCompleted, timeOffsetInMs, hasEta);
     append([todo]).then(todos => {
       dispatch({
         type: 'APPEND_SUCCESS',

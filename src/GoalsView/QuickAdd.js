@@ -51,7 +51,7 @@ function QuickAdd({goal}: Props) {
 
   function handleChange(e) {
     if (e.target.value !== SELECT_GOAL) {
-      addTodo(e.target.value, true, state.timeOffsetInMs);
+      addTodo(e.target.value, true, state.timeOffsetInMs, false);
       setSelected(SELECT_GOAL)
     }
   }

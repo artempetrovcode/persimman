@@ -128,7 +128,7 @@ function TodoItem({todo}: Props) {
             }
             {
               eta == null ?
-                <button onClick={() => handleEtaChange(getTodayMidnightTimestamp())}>set eta</button> :
+                <button onClick={() => handleEtaChange(Date.now())}>set eta</button> :
                 <>
                   <span>ETA: </span>
                   <TodoDateTimeInput 
