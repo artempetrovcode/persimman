@@ -7,7 +7,7 @@ import DispatchContext from '../DispatchContext';
 import TodoInput from './TodoInput';
 import TodoDateTimeInput  from './TodoDateTimeInput';
 import splitText from './splitText';
-import {formatDateTime, getTodayMidnightTimestamp} from '../lib/timeUtils';
+import {formatDate, formatDateTime, getTodayMidnightTimestamp} from '../lib/timeUtils';
 import {decode, encode} from '../lib/encoding';
 
 const {useContext, useState} = React;
@@ -101,7 +101,7 @@ function TodoItem({todo}: Props) {
               <span> [{formatDateTime(completedAt)}]</span>
             </>
           }
-          {eta == null ? null : <u>{`ETA: ${formatDateTime(eta)}`}</u>}
+          {eta == null ? null : <span>{' '}<i>{`[ETA: ${formatDate(eta)}]`}</i></span>}
         </label>
       }
       {
