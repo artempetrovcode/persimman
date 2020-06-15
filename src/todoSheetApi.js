@@ -13,17 +13,29 @@ const COLUMN_NAMES_IN_ORDER = [
   'createdAt',   // 4
   'updatedAt',   // 5
   'eta',         // 6
+  'parentId',    // 7
 ];
 
+function assertType(name: string, value: any, type: string): boolean {
+  if (typeof value === type) {
+    return true;
+  } 
+
+  console.warn(`Expected ${name} (${value}) to be of type ${type}, ${typeof value} is given`);
+  return false;
+}
+
 function rowValueToIdAndObject(value: RowValue): ?Todo {
-  const [id, text, completedAt, isDeleted, createdAt, updatedAt, eta] = value;
-  if (typeof id === 'string' &&
-    typeof text === 'string' &&
-    typeof completedAt === 'string' &&
-    typeof isDeleted === 'string' &&
-    typeof createdAt === 'string' &&
-    typeof updatedAt === 'string'
+  const [id, text, completedAt, isDeleted, createdAt, updatedAt, eta, parentId] = value;
+
+  if (assertType('id', id, 'string') &&
+    assertType('text', text, 'string') &&
+    assertType('completedAt', completedAt, 'string') &&
+    assertType('isDeleted', isDeleted, 'string') &&
+    assertType('createdAt', createdAt, 'string') &&
+    assertType('updatedAt', updatedAt, 'string')
     // eta can be undefined
+    // parentId can be undefined
   ) {
     return ({
       id,
@@ -33,6 +45,7 @@ function rowValueToIdAndObject(value: RowValue): ?Todo {
       createdAt: Number(createdAt),
       updatedAt: Number(updatedAt),
       eta: eta == null ? null : Number(eta),
+      parentId: parentId || null,
     }: Todo);
   } else {
     console.warn(`Cannot parse row "${JSON.stringify(value)}"`);
@@ -48,6 +61,7 @@ function objectToRowValue(todo: Todo): RowValue {
     String(todo.createdAt),
     String(todo.updatedAt),
     todo.eta == null ? '' : String(todo.eta),
+    todo.parentId == null ? '' : todo.id,
   ];
 }
 

@@ -8,4 +8,5 @@ export type Todo = $ReadOnly<{|
   createdAt: number,
   updatedAt: number,
   eta: ?number,
+  parentId: ?string,
 |}>;

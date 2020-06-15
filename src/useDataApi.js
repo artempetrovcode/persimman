@@ -54,6 +54,7 @@ const useDataApi = () => {
       createdAt: now,
       updatedAt: now,
       eta: hasEta ? now : null,
+      parentId: null,
     };
     
     return todo;
