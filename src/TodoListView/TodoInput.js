@@ -3,6 +3,8 @@ import ResizableTextarea from '../ResizableTextarea';
 
 const {useState} = React;
 
+const TAB_KEY_CODE = 9;
+
 function TodoInput(props) {
 	const [value, setValue] = useState(props.initialValue);
 
@@ -20,11 +22,33 @@ function TodoInput(props) {
 		}
 	}
 
+	function handleTab() {
+		console.log('tab')
+	}
+
+	function handleShiftTab() {
+		console.log('shift + tab');
+	}
+
+	function handleKeyDown(e: SyntheticInputEvent<HTMLTextAreaElement>) {
+    if (e.keyCode === TAB_KEY_CODE) {
+      if (e.shiftKey) {
+        handleShiftTab(e);
+      } else {
+        handleTab(e);
+      }
+      e.preventDefault();
+    }
+    props.onKeyDown && props.onKeyDown(e);
+  }
+
 	return <ResizableTextarea 
 		autofocus={true}
 		value={value} 
 		onBlur={handleBlur}
-		onChange={value => setValue(value)}/>
+		onKeyDown={handleKeyDown}
+		onChange={value => setValue(value)}
+	/>
 } 
 
 export default TodoInput;
