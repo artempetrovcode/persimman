@@ -12,8 +12,10 @@ const COLUMN_NAMES_IN_ORDER = [
   'isDeleted',   // 3
   'createdAt',   // 4
   'updatedAt',   // 5
-  'eta',         // 6
-  'parentId',    // 7
+  'estimate',    // 6
+  'spent',       // 7 
+  'eta',         // 8
+  'parentId',    // 9
 ];
 
 function assertType(name: string, value: any, type: string): boolean {
@@ -26,7 +28,7 @@ function assertType(name: string, value: any, type: string): boolean {
 }
 
 function rowValueToIdAndObject(value: RowValue): ?Todo {
-  const [id, text, completedAt, isDeleted, createdAt, updatedAt, eta, parentId] = value;
+  const [id, text, completedAt, isDeleted, createdAt, updatedAt, estimate, spent, eta, parentId] = value;
 
   if (assertType('id', id, 'string') &&
     assertType('text', text, 'string') &&
@@ -34,6 +36,8 @@ function rowValueToIdAndObject(value: RowValue): ?Todo {
     assertType('isDeleted', isDeleted, 'string') &&
     assertType('createdAt', createdAt, 'string') &&
     assertType('updatedAt', updatedAt, 'string')
+    // estimate can be undefined
+    // spent can be undefined
     // eta can be undefined
     // parentId can be undefined
   ) {
@@ -44,7 +48,9 @@ function rowValueToIdAndObject(value: RowValue): ?Todo {
       isDeleted: isDeleted === '1',
       createdAt: Number(createdAt),
       updatedAt: Number(updatedAt),
-      eta: eta == null ? null : Number(eta),
+      estimate: estimate == null || estimate === '' ? null : Number(estimate),
+      spent: spent == null || spent === '' ? null : Number(spent),
+      eta: eta == null || eta === '' ? null : Number(eta),
       parentId: parentId || null,
     }: Todo);
   } else {
@@ -60,6 +66,8 @@ function objectToRowValue(todo: Todo): RowValue {
     JSON.stringify(todo.isDeleted ? 1 : 0),
     String(todo.createdAt),
     String(todo.updatedAt),
+    todo.estimate == null ? '' : String(todo.estimate),
+    todo.spent == null ? '' : String(todo.spent),
     todo.eta == null ? '' : String(todo.eta),
     todo.parentId == null ? '' : todo.id,
   ];

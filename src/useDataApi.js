@@ -53,6 +53,8 @@ const useDataApi = () => {
       isDeleted: false,
       createdAt: now,
       updatedAt: now,
+      estimate: null,
+      spent: null,
       eta: hasEta ? now : null,
       parentId: null,
     };

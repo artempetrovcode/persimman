@@ -32,8 +32,7 @@ function TodoItem({todo}: Props) {
     updateTodoCreatedAt,
     updateTodoEta
   } = commands;
-  const {id, text, createdAt, completedAt, isDeleted, updatedAt, eta} = todo;
-
+  const {id, text, createdAt, completedAt, isDeleted, updatedAt, estimate, spent, eta} = todo;
   function handleCheckboxChange(e) {
     const isCompleted = e.target.checked;
     updateTodoStatus(todo, isCompleted);
@@ -102,6 +101,7 @@ function TodoItem({todo}: Props) {
             </>
           }
           {eta == null ? null : <span>{' '}<i>{`[ETA: ${formatDate(eta)}]`}</i></span>}
+          {estimate == null ? null : <span>{' '}<i>{`[${spent == null ? 0 : spent}/${estimate}]`}</i>{'🍅'}</span>}
         </label>
       }
       {
