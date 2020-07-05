@@ -54,7 +54,7 @@ const useDataApi = () => {
       createdAt: now,
       updatedAt: now,
       estimate: null,
-      spent: null,
+      timeSpent: null,
       eta: hasEta ? now : null,
       parentId: null,
     };
@@ -128,6 +128,14 @@ const useDataApi = () => {
     })
   }
 
+  function updateTodoStatusAndTimeSpent(todo: Todo, isCompleted: boolean, timeSpent: number) {
+    updateTodo({
+      ...todo,
+      completedAt: isCompleted ? Date.now() : null,
+      timeSpent,
+    })
+  }
+
   function deleteTodo(todo: Todo) {
     updateTodo({
       ...todo,
@@ -150,6 +158,7 @@ const useDataApi = () => {
     fetchData, 
     dispatch, 
     updateTodoStatus,
+    updateTodoStatusAndTimeSpent,
     updateTodoText,
     deleteTodo,
     updateTodoCompletedAt,

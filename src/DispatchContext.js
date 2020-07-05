@@ -6,6 +6,7 @@ type Commands = $ReadOnly<{|
   addTodo: (text: string, isCompleted: boolean, timeOffsetInMs: number, hasEta: boolean) => void,
   updateTodo: (todo: Todo) => void,
   updateTodoStatus: (todo: Todo, isCompleted: boolean) => void,
+  updateTodoStatusAndTimeSpent: (todo: Todo, isCompleted: boolean, timeSpent: number) => void,
   deleteTodo: (todo: Todo) => void,
   updateTodoText: (todo: Todo, text: string) => void,
   updateTodoCompletedAt: (todo: Todo, completedAt: number) => void,

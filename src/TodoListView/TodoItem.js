@@ -26,15 +26,24 @@ function TodoItem({todo}: Props) {
   const {
     deleteTodo, 
     updateTodoStatus, 
+    updateTodoStatusAndTimeSpent,
     updateTodo, 
     updateTodoText, 
     updateTodoCompletedAt, 
     updateTodoCreatedAt,
     updateTodoEta
   } = commands;
-  const {id, text, createdAt, completedAt, isDeleted, updatedAt, estimate, spent, eta} = todo;
+  const {id, text, createdAt, completedAt, isDeleted, updatedAt, estimate, timeSpent, eta} = todo;
   function handleCheckboxChange(e) {
     const isCompleted = e.target.checked;
+    // ask to set time spent if estimate was set
+    if (isCompleted === true && estimate != null) {
+      const timeSpentRawInput = window.prompt(`This Todo has estimate ${estimate}ms. Enter timeSpent (current is ${timeSpent != null ? timeSpent : 'null'}):`);
+      const timeSpentInput = Number(timeSpentRawInput);
+      if (!isNaN(timeSpentInput)) {
+        updateTodoStatusAndTimeSpent(todo, isCompleted, timeSpentInput);
+      }
+    }
     updateTodoStatus(todo, isCompleted);
   }
   function handleDeleteClick() {
@@ -101,7 +110,7 @@ function TodoItem({todo}: Props) {
             </>
           }
           {eta == null ? null : <span>{' '}<i>{`[ETA: ${formatDate(eta)}]`}</i></span>}
-          {estimate == null ? null : <span>{' '}<i>{`[${spent == null ? 0 : spent}/${estimate}]`}</i>{'🍅'}</span>}
+          {estimate == null ? null : <span>{' '}<i>{`[${timeSpent == null ? 0 : timeSpent}/${estimate}]`}</i>{'🍅'}</span>}
         </label>
       }
       {

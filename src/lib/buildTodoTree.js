@@ -13,7 +13,7 @@ function buildTodoTree(todos: $ReadOnlyArray<Todo>): $ReadOnlyArray<TodoNode> {
 
   todos.forEach(todo => {
     if (todo.id === todo.parentId) {
-      throw new Error(`todo.parentId cannot be equa todo.id`)
+      throw new Error(`todo.parentId cannot be equal todo.id ${todo.id}`)
     }
 
     if (todoNodeById[todo.id] == null) {

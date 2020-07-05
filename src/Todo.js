@@ -8,7 +8,7 @@ export type Todo = $ReadOnly<{|
   createdAt: number,
   updatedAt: number,
   estimate: ?number, // estimate in ms
-  spent: ?number, // spent in ms
+  timeSpent: ?number, // timeSpent in ms
   eta: ?number,
   parentId: ?string,
 |}>;
