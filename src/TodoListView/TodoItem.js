@@ -7,7 +7,13 @@ import DispatchContext from '../DispatchContext';
 import TodoInput from './TodoInput';
 import TodoDateTimeInput  from './TodoDateTimeInput';
 import splitText from './splitText';
-import {formatDate, formatDateTime, getTodayMidnightTimestamp} from '../lib/timeUtils';
+import {
+  formatDate, 
+  formatDateTime, 
+  formatPomodoros, 
+  getTodayMidnightTimestamp,
+  getMsFromPomodoros,
+} from '../lib/timeUtils';
 import {decode, encode} from '../lib/encoding';
 
 const {useContext, useState} = React;
@@ -34,14 +40,16 @@ function TodoItem({todo}: Props) {
     updateTodoEta
   } = commands;
   const {id, text, createdAt, completedAt, isDeleted, updatedAt, estimate, timeSpent, eta} = todo;
+
   function handleCheckboxChange(e) {
     const isCompleted = e.target.checked;
     // ask to set time spent if estimate was set
     if (isCompleted === true && estimate != null) {
-      const timeSpentRawInput = window.prompt(`This Todo has estimate ${estimate}ms. Enter timeSpent (current is ${timeSpent != null ? timeSpent : 'null'}):`);
+      const message = `This Todo has estimate ${formatPomodoros(estimate)}. Enter timeSpent (current is ${timeSpent != null ? formatPomodoros(timeSpent) : 'null'}):`
+      const timeSpentRawInput = window.prompt(message);
       const timeSpentInput = Number(timeSpentRawInput);
       if (!isNaN(timeSpentInput)) {
-        updateTodoStatusAndTimeSpent(todo, isCompleted, timeSpentInput);
+        updateTodoStatusAndTimeSpent(todo, isCompleted, getMsFromPomodoros(timeSpentInput));
       }
     }
     updateTodoStatus(todo, isCompleted);
@@ -110,7 +118,7 @@ function TodoItem({todo}: Props) {
             </>
           }
           {eta == null ? null : <span>{' '}<i>{`[ETA: ${formatDate(eta)}]`}</i></span>}
-          {estimate == null ? null : <span>{' '}<i>{`[${timeSpent == null ? 0 : timeSpent}/${estimate}]`}</i>{'🍅'}</span>}
+          {estimate == null ? null : <span>{' '}<i>{`[${timeSpent == null ? 0 : formatPomodoros(timeSpent)}/${formatPomodoros(estimate)}]`}</i></span>}
         </label>
       }
       {

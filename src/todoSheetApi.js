@@ -13,7 +13,7 @@ const COLUMN_NAMES_IN_ORDER = [
   'createdAt',   // 4
   'updatedAt',   // 5
   'estimate',    // 6
-  'spent',       // 7 
+  'timeSpent',   // 7 
   'eta',         // 8
   'parentId',    // 9
 ];

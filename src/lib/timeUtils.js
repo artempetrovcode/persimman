@@ -179,3 +179,18 @@ export const getTodayMidnightTimestamp = () => {
   const msInADay = 1000 * 60 * 60 * 24;
   return now - (now % msInADay) + msInADay;
 }
+
+const MS_IN_POMODORO = 1000 * 60 * 25;
+
+export const formatPomodoros = (timestamp: number): string => {
+  const poms = timestamp / MS_IN_POMODORO;
+  
+  if (Math.floor(poms) !== poms) {
+    return poms.toFixed(1) + '🍅';
+  }
+  return poms.toFixed(0) + '🍅';
+}
+
+export const getMsFromPomodoros = (poms: number): number => {
+  return poms * MS_IN_POMODORO;
+}
