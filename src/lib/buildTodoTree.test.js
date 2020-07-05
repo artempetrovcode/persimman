@@ -1,8 +1,6 @@
-
-// import type {Todo} from '../Todo';
-// import type {TodoNode} from './buildTodoTree';
-// import buildTodoTree from './buildTodoTree';
-const buildTodoTree = require('./buildTodoTree');
+import type {Todo} from '../Todo';
+import type {TodoNode} from './buildTodoTree';
+import buildTodoTree from './buildTodoTree';
 
 let staticNextId = 1;
 
@@ -19,27 +17,11 @@ function t(name) {
     parentId: null,
   };
 }
+
 function p(todo, parent) {
   return {
     ...todo,
     parentId: parent.id,
-  }
-}
-
-let staticCount = 0;
-
-function test(todos, expected) {
-  // function test(todos: $ReadOnlyArray<Todo>, expected: $ReadOnlyArray<TodoNode>): void {
-  staticCount++;
-  const actualJSON = JSON.stringify(buildTodoTree(todos));
-  const expectedJSON = JSON.stringify(expected);
-  
-  if (actualJSON !== expectedJSON) {
-    throw new Error(`
-       staticCount: ${staticCount}
-        actualJSON: ${actualJSON}
-      expectedJSON: ${expectedJSON}
-      `)
   }
 }
 
@@ -90,197 +72,8 @@ const leaf2 = t('leaf2');
 const leaf3 = t('leaf3');
 const leaf4 = t('leaf4');
 
-test(
-  [],
-  [],
-)
-
-test(
-  [
-    topParent1,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-  .build(),
-)
-
-test(
-  [
-    topParent1,
-    topParent2,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-  .back()
-    .addChildren(topParent2)
-  .build(),
-)
-
-test(
-  [
-    topParent2,
-    topParent1,
-  ],
-  (new Tree())
-    .addChildren(topParent2)
-    .back()
-    .addChildren(topParent1)
-  .build(),
-)
-
-test(
-  [
-    topParent1,
-    p(leaf1, topParent1),
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-  .build(),
-)
-
-test(
-  [
-    p(leaf1, topParent1),
-    topParent1,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-  .build(),
-)
-
-test(
-  [
-    topParent1,
-    p(leaf1, topParent1),
-    topParent2,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-      .back()
-    .back()
-    .addChildren(topParent2)
-
-  .build(),
-)
-
-test(
-  [
-    topParent1,
-    topParent2,
-    p(leaf1, topParent1),
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-      .back()
-    .back()
-    .addChildren(topParent2)
-
-  .build(),
-)
-
-
-test(
-  [
-    p(leaf1, topParent1),
-    topParent1,
-    topParent2,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-      .back()
-    .back()
-    .addChildren(topParent2)
-
-  .build(),
-)
-
-test(
-  [
-    topParent2,
-    p(leaf1, topParent1),
-    topParent1,
-  ],
-  (new Tree())
-    .addChildren(topParent2)
-    .back()
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-      .back()
-  .build(),
-)
-
-test(
-  [
-    topParent1,
-    p(leaf1, topParent1),
-    p(leaf2, topParent1),
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(leaf1)
-      .back()
-      .addChildren(leaf2)  
-  .build(),
-)
-
-test(
-  [
-    topParent1,
-    p(midNode1, topParent1),
-    p(leaf1, midNode1),
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(midNode1)
-        .addChildren(leaf1)
-  .build(),
-)
-
-test(
-  [
-    p(midNode1, topParent1),
-    p(leaf1, midNode1),
-    topParent1,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(midNode1)
-        .addChildren(leaf1)
-  .build(),
-)
-
-test(
-  [
-    p(leaf1, midNode1),
-    p(midNode1, topParent1),
-    topParent1,
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(midNode1)
-        .addChildren(leaf1)
-  .build(),
-)
-
-test(
-  [
-    p(leaf1, midNode1),
-    topParent1,
-    p(midNode1, topParent1),
-  ],
-  (new Tree())
-    .addChildren(topParent1)
-      .addChildren(midNode1)
-        .addChildren(leaf1)
-  .build(),
-)
-
-const treeForTestingOrderAgnisticizm = (new Tree())
+describe('buildTodoTree', () => {
+  const treeForTestingOrderAgnisticizm = (new Tree())
     .addChildren(topParent1)
       .addChildren(midNode1)
         .addChildren(leaf1)
@@ -304,54 +97,216 @@ const treeForTestingOrderAgnisticizm = (new Tree())
     .addChildren(topParent4)
   .build();
 
-test(
   [
-    topParent1,
-    p(midNode1, topParent1),
-    p(leaf1, midNode1),
-    p(leaf2, midNode1),
-    p(midNode2, midNode1),
-    p(midNode3, midNode2),
-    p(leaf3, midNode3),
-    topParent2,
-    topParent3,
-    p(leaf4, topParent3),
-    topParent4,
-  ],
-  treeForTestingOrderAgnisticizm,
-)
+    [
+      [],
+      [],
+    ],
+    [
+      [
+        topParent1,
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+      .build(),
+    ],
+    [
+        [
+          topParent1,
+          topParent2,
+        ],
+        (new Tree())
+          .addChildren(topParent1)
+        .back()
+          .addChildren(topParent2)
+        .build(),
+    ],
+    [
+        [
+          topParent2,
+          topParent1,
+        ],
+        (new Tree())
+          .addChildren(topParent2)
+          .back()
+          .addChildren(topParent1)
+        .build(),
+    ],
+    [
+        [
+          topParent1,
+          p(leaf1, topParent1),
+        ],
+        (new Tree())
+          .addChildren(topParent1)
+            .addChildren(leaf1)
+        .build(),
+    ],
+    [
+      [
+        p(leaf1, topParent1),
+        topParent1,
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(leaf1)
+      .build(),
+    ],
+    [
+      [
+        topParent1,
+        p(leaf1, topParent1),
+        topParent2,
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(leaf1)
+          .back()
+        .back()
+        .addChildren(topParent2)
+      .build(),
+    ],
+    [
+      [
+        topParent1,
+        topParent2,
+        p(leaf1, topParent1),
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(leaf1)
+          .back()
+        .back()
+        .addChildren(topParent2)
+      .build(),
+    ],
+    [
+      [
+        p(leaf1, topParent1),
+        topParent1,
+        topParent2,
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(leaf1)
+          .back()
+        .back()
+        .addChildren(topParent2)
 
-test(
-  [
-    p(leaf1, midNode1),
-    p(leaf2, midNode1),
-    p(midNode2, midNode1),
-    p(leaf3, midNode3),
-    p(midNode1, topParent1),
-    p(midNode3, midNode2),
-    p(leaf4, topParent3),
-    topParent1,
-    topParent2,
-    topParent3,
-    topParent4,
-  ],
-  treeForTestingOrderAgnisticizm,
-)
+      .build(),
+    ],
+    [
+      [
+        topParent2,
+        p(leaf1, topParent1),
+        topParent1,
+      ],
+      (new Tree())
+        .addChildren(topParent2)
+        .back()
+        .addChildren(topParent1)
+          .addChildren(leaf1)
+          .back()
+      .build(),
+    ],
+    [
+      [
+        topParent1,
+        p(leaf1, topParent1),
+        p(leaf2, topParent1),
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(leaf1)
+          .back()
+          .addChildren(leaf2)  
+      .build(),
+    ],
+    [
+      [
+        topParent1,
+        p(midNode1, topParent1),
+        p(leaf1, midNode1),
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(midNode1)
+            .addChildren(leaf1)
+      .build(),
+    ],
+    [
+      [
+        p(midNode1, topParent1),
+        p(leaf1, midNode1),
+        topParent1,
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(midNode1)
+            .addChildren(leaf1)
+      .build(),
+    ],
+    [
+      [
+        p(leaf1, midNode1),
+        p(midNode1, topParent1),
+        topParent1,
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(midNode1)
+            .addChildren(leaf1)
+      .build(),
+    ],
+    [
+      [
+        p(leaf1, midNode1),
+        topParent1,
+        p(midNode1, topParent1),
+      ],
+      (new Tree())
+        .addChildren(topParent1)
+          .addChildren(midNode1)
+            .addChildren(leaf1)
+      .build(),
+    ],
+    [
+      [
+        topParent1,
+        p(midNode1, topParent1),
+        p(leaf1, midNode1),
+        p(leaf2, midNode1),
+        p(midNode2, midNode1),
+        p(midNode3, midNode2),
+        p(leaf3, midNode3),
+        topParent2,
+        topParent3,
+        p(leaf4, topParent3),
+        topParent4,
+      ],
+      treeForTestingOrderAgnisticizm
+    ],
+    [
+      [
+        p(leaf1, midNode1),
+        p(leaf2, midNode1),
+        p(midNode2, midNode1),
+        p(leaf3, midNode3),
+        p(midNode1, topParent1),
+        p(midNode3, midNode2),
+        p(leaf4, topParent3),
+        topParent1,
+        topParent2,
+        topParent3,
+        topParent4,
+      ],
+      treeForTestingOrderAgnisticizm,
+    ]
 
-
-// test(
-//   [
-//     {"id":"bfe14d07-9a4f-430e-8808-75170048768d","text":"@flexibility 30 min stretch","completedAt":null,"isDeleted":false,"createdAt":1586053587158,"updatedAt":1586028707895,"eta":1585958400000,"parentId":"52d4ac2f-2eeb-416c-aaff-587ecc39c1bd"},
-//     {"id":"72ffba90-f984-49a3-9bb0-ef6f7eda9733","text":"@diet 🍳 balanced breakfast ","completedAt":null,"isDeleted":false,"createdAt":1585448867217,"updatedAt":1586028722188,"eta":1585958400000,"parentId":null},
-//     {"id":"d9d46fd7-1170-4b0d-8ada-c8e4d78b1dc6","text":"@diet 🥐 healthy brunch","completedAt":null,"isDeleted":false,"createdAt":1585880877815,"updatedAt":1586028713299,"eta":1585958400000,"parentId":null},
-//     {"id":"ce3ff4b9-556a-4bd4-a54e-18a6f0f4383b","text":"add me2","completedAt":null,"isDeleted":false,"createdAt":1587944254848,"updatedAt":1587944651980,"eta":1587944651980,"parentId":null},
-//     {"id":"b9a8a18f-72ff-4e6f-ba6e-760ccdbe7466","text":"uadd","completedAt":null,"isDeleted":false,"createdAt":1587944364150,"updatedAt":1587944587573,"eta":1587945600000,"parentId":null},
-//     {"id":"b918fa69-7c41-41b4-a241-aaeb9a43f040","text":"uadd","completedAt":null,"isDeleted":false,"createdAt":1587944373041,"updatedAt":1587944465951,"eta":1587859200000,"parentId":null},
-//     {"id":"3664c4ce-c6b6-47cb-8b06-15d6d6e60474","text":"yo with eta","completedAt":null,"isDeleted":false,"createdAt":1587944938973,"updatedAt":1587944947250,"eta":1588117738973,"parentId":null},
-//   ],
-//   []
-// )
-
-
-
-console.log(`PASSED ${staticCount} tests`)
+  ].forEach(([todos, expected], i) => {
+    test(`case ${i}`, () => {
+      const builtTree = buildTodoTree(todos);
+      expect(builtTree).toEqual(expected);
+    })
+  })
+});
