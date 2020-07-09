@@ -25,11 +25,11 @@ function GantHistoryView({todos}: Props) {
     [todayTimestamp]: [],
   };
 
-  const todosWithCompletedAt = todos
+  const todosWithEta = todos
     .filter((todo: Todo) => todo.eta != null)
     .sort((a: Todo, b: Todo) => a.createdAt == null || b.createdAt == null ? 0 : a.createdAt - b.createdAt)
 
-  todosWithCompletedAt
+  todosWithEta
     .forEach((todo: Todo) => {
       const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 
       if (todo.completedAt != null) {
@@ -95,7 +95,7 @@ function GantHistoryView({todos}: Props) {
         </tr>
       </thead>
       <tbody>
-        {todosWithCompletedAt.map(todo => (
+        {todosWithEta.map(todo => (
           <GantHistoryRow key={todo.id} todo={todo} sortedDayTimestamps={sortedDayTimestamps} todayTimestamp={todayTimestamp} />
         ))}
       </tbody>
