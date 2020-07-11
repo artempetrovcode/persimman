@@ -121,6 +121,14 @@ const useDataApi = () => {
     })
   }
 
+  function updateTodoParentId(todo: Todo, parentId: ?string): void {
+    updateTodo({
+      ...todo,
+      parentId,
+    })
+  }
+  
+
   function updateTodoStatus(todo: Todo, isCompleted: boolean) {
     updateTodo({
       ...todo,
@@ -164,6 +172,7 @@ const useDataApi = () => {
     updateTodoCompletedAt,
     updateTodoCreatedAt,
     updateTodoEta,
+    updateTodoParentId,
     setTimeOffsetInMs,
   };
 };

@@ -5,7 +5,17 @@ const {useState} = React;
 
 const TAB_KEY_CODE = 9;
 
-function TodoInput(props) {
+type Props = $ReadOnly<{
+	initialValue: string,
+	onCancel: () => {},
+	onDelete: () => {},
+	onChange: (value: string) => {},
+	onKeyDown: (e: SyntheticInputEvent<HTMLTextAreaElement>) => {},
+	onLevelUp: () => {},
+	onLevelDown: () => {},
+}>;
+
+function TodoInput(props: Props) {
 	const [value, setValue] = useState(props.initialValue);
 
 	function handleChange(e) {
@@ -23,11 +33,11 @@ function TodoInput(props) {
 	}
 
 	function handleTab() {
-		console.log('tab')
+		props.onLevelDown && props.onLevelDown();
 	}
 
 	function handleShiftTab() {
-		console.log('shift + tab');
+		props.onLevelUp && props.onLevelUp();
 	}
 
 	function handleKeyDown(e: SyntheticInputEvent<HTMLTextAreaElement>) {

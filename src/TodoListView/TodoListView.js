@@ -30,7 +30,18 @@ function TodoListView({todos}: Props) {
   return (
     <ul>
       {level0todoNodes.map((level0todoNode, i) => {
-        return <TodoNodeComponent key={i} todoNode={level0todoNode} />
+        const prevSameLevelTodoId = i === 0 ? null : level0todoNodes[i - 1].todo.id;
+        const nextSaveLevelTodoNode = level0todoNodes[i + 1];
+        const nextSameLevelTodo = nextSaveLevelTodoNode != null ? nextSaveLevelTodoNode.todo : null;
+        return (
+          <TodoNodeComponent 
+            key={level0todoNode.todo.id} 
+            nextSameLevelTodo={nextSameLevelTodo}
+            todoNode={level0todoNode} 
+            prevSameLevelTodoId={prevSameLevelTodoId} 
+            grandParentTodoId={null}
+          />
+        );
       })}
     </ul>
   )
@@ -38,14 +49,38 @@ function TodoListView({todos}: Props) {
 
 type PropsFor = {
   todoNode: TodoNode;
+  prevSameLevelTodoId: ?string,
+  grandParentTodoId: ?string,
+  nextSameLevelTodo: ?Todo,
 }
 
 function TodoNodeComponent(props: PropsFor) {
-  const children = props.todoNode.children.map((childTodoNode, i) => <TodoNodeComponent key={i} todoNode={childTodoNode} />);
+  const children = props.todoNode.children.map((childTodoNode, i) => {
+    const nextSaveLevelTodoNode = props.todoNode.children[i + 1];
+    const nextSameLevelTodo = nextSaveLevelTodoNode != null ? nextSaveLevelTodoNode.todo : null;
+    const prevSameLevelTodoId = i === 0 ? null : props.todoNode.children[i - 1].todo.id;
+    return (
+      <TodoNodeComponent 
+        grandParentTodoId={props.todoNode.todo.parentId}
+        key={childTodoNode.todo.id} 
+        nextSameLevelTodo={nextSameLevelTodo}
+        todoNode={childTodoNode} 
+        prevSameLevelTodoId={prevSameLevelTodoId}
+      />
+    );
+  });
 
   return (
     <>
-      <li><TodoItem todo={props.todoNode.todo} /></li>
+      <li>
+        <TodoItem
+          allowParentChange={true}
+          grandParentTodoId={props.grandParentTodoId}
+          nextSameLevelTodo={props.nextSameLevelTodo}
+          todo={props.todoNode.todo}
+          prevSameLevelTodoId={props.prevSameLevelTodoId}
+        />
+      </li>
       {children.length > 0 ? <ul>{children}</ul> : null}
     </>
   );

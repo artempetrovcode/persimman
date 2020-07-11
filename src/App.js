@@ -71,6 +71,7 @@ function App() {
     updateTodoCompletedAt,
     updateTodoCreatedAt,
     updateTodoEta,
+    updateTodoParentId,
   } = useDataApi();
   
   useEffect(fetchData, []);
@@ -86,6 +87,7 @@ function App() {
       updateTodoCompletedAt,
       updateTodoCreatedAt,
       updateTodoEta,
+      updateTodoParentId,
     }}>
       <StateContext.Provider value={state}>
         <Router>

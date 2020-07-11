@@ -19,10 +19,14 @@ import {decode, encode} from '../lib/encoding';
 const {useContext, useState} = React;
 
 type Props = {
+  allowParentChange?: boolean,
+  grandParentTodoId?: ?string,
+  nextSameLevelTodo?: ?Todo,
   todo: Todo,
+  prevSameLevelTodoId?: ?string,
 }
 
-function TodoItem({todo}: Props) {
+function TodoItem({allowParentChange, grandParentTodoId, nextSameLevelTodo, todo, prevSameLevelTodoId}: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingProps, setIsEditingProps] = useState(false);
   const commands = useContext(DispatchContext);
@@ -37,7 +41,8 @@ function TodoItem({todo}: Props) {
     updateTodoText, 
     updateTodoCompletedAt, 
     updateTodoCreatedAt,
-    updateTodoEta
+    updateTodoEta,
+    updateTodoParentId,
   } = commands;
   const {id, text, createdAt, completedAt, isDeleted, updatedAt, estimate, timeSpent, eta} = todo;
 
@@ -85,6 +90,21 @@ function TodoItem({todo}: Props) {
   function handleEtaChange(newEta: number) {
     updateTodoEta(todo, newEta);
   }
+  function handleLevelUp() {
+    if (allowParentChange) {
+      updateTodoParentId(todo, grandParentTodoId);
+      if (nextSameLevelTodo != null) {
+        updateTodoParentId(nextSameLevelTodo, todo.id);
+      }
+    }
+  }
+  function handleLevelDown() {
+    if (allowParentChange) {
+      if (prevSameLevelTodoId != null) {
+        updateTodoParentId(todo, prevSameLevelTodoId)
+      }
+    }
+  }
 
   const style = {
     fontWeight: 'bold', 
@@ -107,6 +127,8 @@ function TodoItem({todo}: Props) {
           onCancel={handleInputCancel}
           onDelete={handleInputDelete}
           onChange={handleInputChange}
+          onLevelUp={handleLevelUp}
+          onLevelDown={handleLevelDown}
           initialValue={decode(text)} />
         </> :
         <label style={{padding: '2px', border: '1px solid transparent', lineHeight: '19px', whiteSpace: 'pre-line'}}>

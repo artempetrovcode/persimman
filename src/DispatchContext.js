@@ -11,6 +11,7 @@ type Commands = $ReadOnly<{|
   updateTodoText: (todo: Todo, text: string) => void,
   updateTodoCompletedAt: (todo: Todo, completedAt: number) => void,
   updateTodoEta: (todo: Todo, eta: number) => void,
+  updateTodoParentId: (todo: Todo, parentId: ?string) => void,
   updateTodoCreatedAt: (todo: Todo, createdAt: number) => void,
 |}>;
 
