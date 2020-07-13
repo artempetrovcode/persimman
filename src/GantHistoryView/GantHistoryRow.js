@@ -9,12 +9,18 @@ import TodoItem from '../TodoListView/TodoItem';
 const {useContext} = React;
 
 type Props = $ReadOnly<{|
-    todo: Todo,
-    sortedDayTimestamps: $ReadOnlyArray<number>,
-    todayTimestamp: number,
-  |}>;
+  level: number,
+  todo: Todo,
+  sortedDayTimestamps: $ReadOnlyArray<number>,
+  todayTimestamp: number,
+|}>;
 
-function GantHistoryRow({todo, sortedDayTimestamps, todayTimestamp}: Props) {
+function GantHistoryRow({
+  level,
+  todo, 
+  sortedDayTimestamps, 
+  todayTimestamp
+}: Props) {
   const commands = useContext(DispatchContext);
   if (commands == null) {
     return null;
@@ -31,8 +37,13 @@ function GantHistoryRow({todo, sortedDayTimestamps, todayTimestamp}: Props) {
   const nowTimestamp = Date.now();
 
   return (
-    <tr>
-      <td>
+    <tr style={{
+      borderTop: level === 0 ? '2px solid' : '0 none'
+    }}>
+      <td style={{
+        fontWeight: level === 0 ? 'bold' : 'normal',
+        paddingLeft: `${level * 40}px`
+      }}>
         <TodoItem todo={todo} />
       </td>
       {sortedDayTimestamps.reduce((list, dayTimestamp) => {

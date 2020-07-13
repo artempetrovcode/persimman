@@ -1,10 +1,12 @@
 // @flow
 import type {Todo} from '../Todo';
+import type {TodoNode} from '../lib/buildTodoTree';
 import * as React from 'react';
 import {getDateForThisZone, getDayTimestampForThisZone2, getISODateString, nextDayOffset, isDayOff} from '../lib/timeUtils';
 import DispatchContext from '../DispatchContext';
 import TodoDateTimeInput  from '../TodoListView/TodoDateTimeInput';
 import GantHistoryRow from './GantHistoryRow';
+import buildTodoTree from '../lib/buildTodoTree';
 
 const {useContext} = React;
 
@@ -67,6 +69,9 @@ function GantHistoryView({todos}: Props) {
     timestamp = date.getTime();
   }
 
+  // deleted and comleted are not shown
+  const level0todoNodesWithEta = buildTodoTree(todosWithEta.slice().sort((a, b) => a.createdAt - b.createdAt));
+
   function handleEtaChange(todo: Todo, newEta: number) {
     updateTodoEta(todo, newEta);
   }
@@ -95,13 +100,58 @@ function GantHistoryView({todos}: Props) {
         </tr>
       </thead>
       <tbody>
-        {todosWithEta.map(todo => (
-          <GantHistoryRow key={todo.id} todo={todo} sortedDayTimestamps={sortedDayTimestamps} todayTimestamp={todayTimestamp} />
+        {level0todoNodesWithEta.map(todoNode => (
+          <GantHistoryTodoNodeComponent
+            level={0}
+            key={todoNode.todo.id} 
+            todoNode={todoNode} 
+            sortedDayTimestamps={sortedDayTimestamps} 
+            todayTimestamp={todayTimestamp}
+          />
         ))}
       </tbody>
     </table>
     </>
   );
+}
+
+type PropsForComponent = $ReadOnly<{
+  level: number,
+  todoNode: TodoNode;
+  sortedDayTimestamps: $ReadOnlyArray<number>,
+  todayTimestamp: number,
+}>;
+
+function GantHistoryTodoNodeComponent({
+  level,
+  todoNode,
+  sortedDayTimestamps,
+  todayTimestamp,
+}: PropsForComponent) {
+  const {children: childrenTodoNodes, todo} = todoNode;
+  const children = childrenTodoNodes.map((childTodoNode, i) => {
+    return (
+      <GantHistoryTodoNodeComponent
+        level={level + 1}
+        key={childTodoNode.todo.id} 
+        todoNode={childTodoNode} 
+        sortedDayTimestamps={sortedDayTimestamps} 
+        todayTimestamp={todayTimestamp}
+      />
+    );
+  })
+
+  return (
+    <>
+      <GantHistoryRow
+        level={level}
+        todo={todo} 
+        sortedDayTimestamps={sortedDayTimestamps} 
+        todayTimestamp={todayTimestamp}
+      />
+      {children}
+    </>
+  )
 }
 
 export default GantHistoryView;
