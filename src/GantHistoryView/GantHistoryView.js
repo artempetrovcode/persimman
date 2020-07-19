@@ -68,8 +68,66 @@ function GantHistoryView({todos}: Props) {
     timestamp = date.getTime();
   }
 
+
+  function getGoalOrGoala(todo: Todo): ?string {
+    const chunks = todo.text.split(' ');
+    const goalOrGoalaIndex = chunks.includes('@goal') ? chunks.indexOf('@goal') : chunks.indexOf('@goala');
+    return chunks[goalOrGoalaIndex + 1];
+  }
+  
+
+  const toplineGoalTagsToCreatedAt = todosWithEta.reduce((toplineGoalTagsToCreatedAt, todo) => {
+    const chunks = todo.text.split(' ');
+    if (chunks.includes('@topline')) {
+      const goalTag = getGoalOrGoala(todo);
+      if (goalTag != null) {
+        toplineGoalTagsToCreatedAt[goalTag] = todo.createdAt;
+      }
+    }
+    return toplineGoalTagsToCreatedAt;
+  }, {});
+
+  console.log(toplineGoalTagsToCreatedAt)
+
+  function isTopline(todo: Todo): boolean {
+    return todo.text.split(' ').includes('@topline')
+  }
+
+
   // deleted and comleted are not shown
-  const todosToRender = todosWithEta.slice().sort((a, b) => a.createdAt - b.createdAt);
+  const todosToRender = todosWithEta.slice().sort((a, b) => {
+    const goalA = getGoalOrGoala(a);
+    if (goalA == null) {
+      console.log('goalA is null');
+      return 0;
+    }
+    const goalB = getGoalOrGoala(b);
+    if (goalB == null) {
+      console.log('goalB is null');
+      return 0;
+    }
+    const goalAToplineCreatedAt = toplineGoalTagsToCreatedAt[goalA];
+    if (goalAToplineCreatedAt == null) {
+      console.log('goalAToplineCreatedAt is null')
+      return 0;
+    }
+    const goalBToplineCreatedAt = toplineGoalTagsToCreatedAt[goalB];
+    if (goalBToplineCreatedAt == null) {
+      console.log('goalBToplineCreatedAt is null')
+      return 0;
+    }
+
+    if (goalAToplineCreatedAt === goalBToplineCreatedAt) {
+      if (isTopline(a)) {
+        return -1;
+      }
+      if (isTopline(b)) {
+        return 1;
+      }
+    }
+    
+    return goalAToplineCreatedAt - goalBToplineCreatedAt;
+  });
 
   function handleEtaChange(todo: Todo, newEta: number) {
     updateTodoEta(todo, newEta);
@@ -101,7 +159,7 @@ function GantHistoryView({todos}: Props) {
       <tbody>
         {todosToRender.slice().map(todo => (
           <GantHistoryRow
-            level={0}
+            level={isTopline(todo) ? 0 : 1}
             key={todo.id}
             todo={todo} 
             sortedDayTimestamps={sortedDayTimestamps} 
