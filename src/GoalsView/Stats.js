@@ -10,7 +10,7 @@ import {getDateForThisZone, getDayTimestampForThisZone2} from '../lib/timeUtils'
 const {useContext, useState} = React;
 
 function isGoal(text) {
-  return text.split(' ').includes('@goal')
+  return text.split(' ').includes('@target')
 }
 function getGoal(text) {
   return parseFloat(text.split(' ').filter(t => t[0] !== '@')[0])
@@ -63,7 +63,7 @@ function Stats(props: Props) {
         <QuickAdd goal={props.goal} />
       </div>
       <div style={{padding: '10px'}}>
-      { goalText.match('@goal @flexibility') || goalText.match('@goal @gym') || goalText.match('@goal @posture') ? 
+      { goalText.match('@target @flexibility') || goalText.match('@target @gym') || goalText.match('@target @posture') ? 
         <BarWeek goal={goal} goalsByDate={goalsByDate} groupedByDate={groupedByDate} />:
         <Bar goal={goal} goalsByDate={goalsByDate} groupedByDate={groupedByDate} />
       }      

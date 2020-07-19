@@ -12,8 +12,8 @@ function GoalsView() {
 
   const goals = [];
   state.todos.forEach((todo: Todo) => {
-    if (todo.text.match(/@goal/)) {
-      const goal = todo.text.split(' ').find(word => word[0] === '@' && word !== '@goal');
+    if (todo.text.match(/@target/)) {
+      const goal = todo.text.split(' ').find(word => word[0] === '@' && word !== '@target');
       goals.push(goal);
     }
   })

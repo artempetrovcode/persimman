@@ -8,7 +8,7 @@ const {useState, useContext} = React;
 const SELECT_GOAL = 'SELECT_GOAL';
 
 function isGoal(text) {
-  return text.split(' ').includes('@goal')
+  return text.split(' ').includes('@target')
 }
 
 type Props = {|
@@ -30,7 +30,7 @@ function QuickAdd({goal}: Props) {
       return;
     }
 
-    if (todo.text.split(' ').includes('@goal')) {
+    if (todo.text.split(' ').includes('@target')) {
       return;
     }
 
