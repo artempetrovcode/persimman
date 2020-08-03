@@ -139,7 +139,7 @@ function GantHistoryView({todos}: Props) {
     <>
     <table border="1px" style={{borderCollapse: 'collapse'}}>
       <thead>
-        <tr>
+        <tr style={{fontSize: '10px'}}>
           <th></th>
           {sortedDayTimestamps.map(dayTimestamp => (
             <th key={dayTimestamp} style={{ 

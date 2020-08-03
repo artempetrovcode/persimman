@@ -42,9 +42,10 @@ function GantHistoryRow({
     }}>
       <td style={{
         fontWeight: level === 0 ? 'bold' : 'normal',
-        paddingLeft: `${level * 40}px`
+        paddingLeft: `${level * 40}px`,
+        minWidth: '400px',
       }}>
-        <TodoItem todo={todo} />
+        <TodoItem shouldShowEta={false} todo={todo} />
       </td>
       {sortedDayTimestamps.reduce((list, dayTimestamp) => {
         const createdAtTimestamp = getDayTimestampForThisZone2(todo.createdAt); 

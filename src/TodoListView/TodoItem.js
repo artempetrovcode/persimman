@@ -22,11 +22,19 @@ type Props = {
   allowParentChange?: boolean,
   grandParentTodoId?: ?string,
   nextSameLevelTodo?: ?Todo,
-  todo: Todo,
   prevSameLevelTodoId?: ?string,
+  shouldShowEta?: boolean,
+  todo: Todo,
 }
 
-function TodoItem({allowParentChange, grandParentTodoId, nextSameLevelTodo, todo, prevSameLevelTodoId}: Props) {
+function TodoItem({
+  allowParentChange, 
+  grandParentTodoId, 
+  nextSameLevelTodo, 
+  prevSameLevelTodoId,
+  shouldShowEta = false,
+  todo, 
+}: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingProps, setIsEditingProps] = useState(false);
   const commands = useContext(DispatchContext);
@@ -139,7 +147,7 @@ function TodoItem({allowParentChange, grandParentTodoId, nextSameLevelTodo, todo
               <span> [{formatDateTime(completedAt)}]</span>
             </>
           }
-          {eta == null ? null : <span>{' '}<i>{`[ETA: ${formatDate(eta)}]`}</i></span>}
+          {shouldShowEta === false || eta == null ? null : <span>{' '}<i>{`[ETA: ${formatDate(eta)}]`}</i></span>}
           {estimate == null ? null : <span>{' '}<i>{`[${timeSpent == null ? 0 : formatPomodoros(timeSpent)}/${formatPomodoros(estimate)}]`}</i></span>}
         </label>
       }
@@ -179,7 +187,7 @@ function TodoItem({allowParentChange, grandParentTodoId, nextSameLevelTodo, todo
             }
             <button onClick={handleDeleteClick}>delete</button>
           </> :
-          <button onClick={() => setIsEditingProps(true)}>edit props</button>
+          <button onClick={() => setIsEditingProps(true)}>{'✏️'}</button>
       }
     </div>
   );
